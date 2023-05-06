@@ -13,7 +13,6 @@ export type UserAttributes = {
 
 export type UserCreationAttributes = Optional<UserAttributes, 'ID'| 'CreatedAt' | 'UpdatedAt'>;
 
-
 export class User extends Model<UserAttributes, UserCreationAttributes>{
   declare ID: string;
   declare FirstName: string;
