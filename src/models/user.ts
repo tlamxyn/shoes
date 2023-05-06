@@ -53,7 +53,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes>{
       
       CreatedAt: DataTypes.DATE,
       UpdatedAt: DataTypes.DATE,
-      DeletedAt: DataTypes.DATE,
+      DeletedAt: DataTypes.DATE
     }, { 
       sequelize, 
       modelName: 'User',
