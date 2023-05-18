@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import { MySQL } from "./database/database";
+import { EmailService } from "./services/mail/mail";
 
 const onExit = (manager: EventEmitter) => {
     process.on("SIGINT", () => {
@@ -25,7 +26,8 @@ class ShoesManager extends EventEmitter {
         await MySQL.init()
     }
     public async exit() {
-        await this.closeDatabase()
+        EmailService.closeTransporter();
+        await this.closeDatabase();
         process.exit(0)
     }
 

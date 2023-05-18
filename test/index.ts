@@ -15,9 +15,9 @@ const main = async () => {
     //     LastName: "Đặng Trần",
     // })
 
-    await User.update({LastName:"Gara", Email: "tlamxyn@gmail.com"}, {
+    await User.update({FullName:"Gara", Email: "tlamxyn@gmail.com"}, {
         where: {
-            FirstName: "Lam"
+            FullName: "Lam"
         }
     })
 
