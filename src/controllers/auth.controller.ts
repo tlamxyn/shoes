@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { Gender, Status, Type, User, UserCreationAttributes } from "../models/user";
+import { Status, User } from "../models/user";
 import { PasswordGenerator } from "../services/password/password";
 import { OK, Created, Unauthorized, InternalServerError, BadRequest } from "../services/response_content/response_content";
 

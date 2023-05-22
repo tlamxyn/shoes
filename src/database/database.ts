@@ -1,6 +1,7 @@
 import { Sequelize, Options, BaseError, ConnectionError } from "sequelize";
 import { shoesmanager } from "../manager";
 import { User } from "../models/user";
+import { Permission } from "../models/permission";
 
 export class MySQL {
     public static sequelize: Sequelize | undefined = undefined;
@@ -33,6 +34,7 @@ export class MySQL {
         }
 
         User.defineUser(this.sequelize)
+        Permission.defindPermission(this.sequelize)
     }
     public static async close() {
         await this.sequelize?.close()

@@ -1,4 +1,4 @@
-import { Model, Sequelize, DataTypes, Optional } from "sequelize";
+import { Model, Sequelize, DataTypes, Optional, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey, UUIDV4 } from "sequelize";
 
 export enum Role {
     Administrator = "Administrator",
@@ -7,6 +7,7 @@ export enum Role {
 }
 
 export enum Table {
+    ALL = "all",
     user = "user",
     permission = "permission",
 }
@@ -30,48 +31,43 @@ export enum CRUD {
 
 }
 
-export type PermissionAttributes = {
-    UserID: string,
-    Role: Role,
-    Table: Table,
-    CRUD: CRUD
-}
-
-export type PermissionCreationAttributes = Optional<PermissionAttributes, 'UserID'>
-
-export class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> {
-    declare UserID: string;
+export class Permission extends Model<InferAttributes<Permission>, InferCreationAttributes<Permission>> {
+    declare UserID: ForeignKey<string>;
     declare Role: Role;
     declare Table: Table;
     declare CRUD: CRUD
 
-    public static defindPermission(sequelize: Sequelize) {
+    public static defindPermission(sequelize: Sequelize): NonAttribute<typeof Permission> {
         if(sequelize.models.Permission === Permission) return Permission;
 
         this.init({
             UserID: {
-                type: DataTypes.UUIDV4,
-                primaryKey: true
+                type: DataTypes.UUID,
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Role: {
                 type: DataTypes.ENUM({
                     values: Object.values(Role)
                 }),
+                primaryKey: true,
                 defaultValue: Role.Customer
             },
             Table: {
                 type: DataTypes.ENUM({
-                    values: Object.values(Table)
+                    values: Object.values(Table),
                 }),
+                primaryKey: true,
+                defaultValue: Table.ALL
             },
             CRUD: {
                 type: DataTypes.ENUM({
-                    values: Object.values(CRUD)
+                    values: Object.values(CRUD),
                 }),
                 defaultValue: CRUD.All
             }
         }, {
-            sequelize: sequelize,
+            sequelize,
             modelName: "Permission",
         });
 
