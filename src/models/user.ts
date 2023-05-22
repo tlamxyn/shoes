@@ -28,7 +28,6 @@ export type UserAttributes = {
   Password: string,
   Salt: string, // Is Used for password hash
   Status: Status,
-  Type: Type,
   CreatedAt: Date,
   UpdatedAt: Date,
   DeletedAt: Date | null
@@ -36,7 +35,7 @@ export type UserAttributes = {
 
 export type UserCreationAttributes = Optional<
   UserAttributes,
-  'ID' | 'CreatedAt' | 'UpdatedAt' | 'DeletedAt' | 'Gender' | 'Status' | 'Type' | 'Birthday'
+  'ID' | 'CreatedAt' | 'UpdatedAt' | 'DeletedAt' | 'Gender' | 'Status' | 'Birthday'
 >;
 
 export class User extends Model<UserAttributes, UserCreationAttributes>{
@@ -49,7 +48,6 @@ export class User extends Model<UserAttributes, UserCreationAttributes>{
   declare Password: string;
   declare Salt: string; // Is Used for password hash
   declare Status: Status;
-  declare Type: Type;
   declare CreatedAt: Date;
   declare UpdatedAt: Date;
   declare DeletedAt: Date | null
@@ -96,11 +94,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes>{
       },
       Status: {
         type: DataTypes.ENUM(Status.Unavailable, Status.Available, Status.Locked),
-        defaultValue: Status.Available
-      },
-      Type: {
-        type: DataTypes.ENUM(Type.Administrator, Type.Customer, Type.Shipper),
-        defaultValue: Type.Customer
+        defaultValue: Status.Unavailable
       },
 
       CreatedAt: DataTypes.DATE,

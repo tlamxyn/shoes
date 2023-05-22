@@ -6,6 +6,7 @@ export class MySQL {
     public static sequelize: Sequelize | undefined = undefined;
     public static config: Options = {
         dialect: "mysql",
+        logging: false,
         define: {
             freezeTableName: true,
             timestamps: true,
