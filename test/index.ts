@@ -2,6 +2,7 @@ import { where } from "sequelize";
 import { MySQL } from "../src/database/database";
 import { shoesmanager } from "../src/manager";
 import { User } from "../src/models/user";
+import { Permission } from "../src/models/permission";
 
 require("dotenv").config();
 
@@ -10,18 +11,15 @@ const main = async () => {
     // Initing Database
     await shoesmanager.initDatabase()
 
-    // const user = await User.create({
-    //     FirstName: "Lam",
-    //     LastName: "Đặng Trần",
-    // })
 
-    await User.update({FullName:"Gara", Email: "tlamxyn@gmail.com"}, {
+    const user = await User.findOne({
         where: {
-            FullName: "Lam"
-        }
+            Email: "lam@gmail.com"
+        },
+        include: Permission
     })
 
-    // console.log(user)
+    console.log(user)
 }
 
 main()

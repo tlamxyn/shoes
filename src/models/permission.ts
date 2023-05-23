@@ -1,4 +1,5 @@
-import { Model, Sequelize, DataTypes, Optional, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey, UUIDV4 } from "sequelize";
+import { Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey } from "sequelize";
+import { User } from "./user";
 
 export enum Role {
     Administrator = "Administrator",
@@ -38,7 +39,7 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
     declare CRUD: CRUD
 
     public static defindPermission(sequelize: Sequelize): NonAttribute<typeof Permission> {
-        if(sequelize.models.Permission === Permission) return Permission;
+        if (sequelize.models.Permission === Permission) return Permission;
 
         this.init({
             UserID: {
@@ -72,5 +73,15 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
         });
 
         return Permission
+    }
+
+    public static associateUser(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Permission != Permission) return false;
+
+        if (sequelize.models.User != User) return false;
+
+        Permission.belongsTo(User, {foreignKey: "UserID"});
+
+        return true;
     }
 }

@@ -1,7 +1,5 @@
-import {
-    Model, Sequelize, DataTypes, InferAttributes,
-    InferCreationAttributes, CreationOptional, NonAttribute
-} from "sequelize";
+import {Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute } from "sequelize";
+import { Permission } from "./permission";
 
 export enum Gender {
     Other = "Other",
@@ -46,25 +44,25 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
                 defaultValue: DataTypes.UUIDV4
             },
             Username: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(200),
                 allowNull: false,
                 unique: true
             },
             FullName: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(100),
                 allowNull: false
             },
             Email: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(200),
                 unique: true,
                 allowNull: false
             },
             Password: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(50),
                 allowNull: false
             },
             Salt: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(20),
                 allowNull: false
             },
             Gender: {
@@ -97,5 +95,15 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         });
 
         return User;
+    }
+
+    public static associatePermission(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Permission != Permission) return false;
+
+        User.hasMany(Permission, {foreignKey: "UserID", sourceKey: "ID"});
+
+        return true;
     }
 }

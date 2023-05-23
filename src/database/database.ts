@@ -35,6 +35,9 @@ export class MySQL {
 
         User.defineUser(this.sequelize)
         Permission.defindPermission(this.sequelize)
+
+        Permission.associateUser(this.sequelize)
+        User.associatePermission(this.sequelize)
     }
     public static async close() {
         await this.sequelize?.close()

@@ -1,5 +1,6 @@
 import { ConsoleAction } from "./type";
 import { migrate } from "../migrations/migrate";
+import { seeder } from "../seeders/seeder";
 
 require("dotenv").config();
 
@@ -29,7 +30,7 @@ if (argv[0].toString() === ConsoleAction[ConsoleAction.migrate]) {
 }
 
 else if (argv[0].toString() === ConsoleAction[ConsoleAction.seed]) {
-
+    seeder();
 }
 
 else {
