@@ -1,5 +1,6 @@
 import {Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute } from "sequelize";
 import { Permission } from "./permission";
+import { Verification } from "./verification";
 
 export enum Gender {
     Other = "Other",
@@ -103,6 +104,16 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         if (sequelize.models.Permission != Permission) return false;
 
         User.hasMany(Permission, {foreignKey: "UserID", sourceKey: "ID"});
+
+        return true;
+    }
+
+    public static associateVerification(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Verification != Verification) return false;
+
+        User.hasMany(Verification, {foreignKey: "UserID", sourceKey: "ID"});
 
         return true;
     }

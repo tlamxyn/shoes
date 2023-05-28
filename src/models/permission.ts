@@ -65,6 +65,7 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
                 type: DataTypes.ENUM({
                     values: Object.values(CRUD),
                 }),
+                allowNull: false,
                 defaultValue: CRUD.All
             }
         }, {

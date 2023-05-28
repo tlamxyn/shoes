@@ -20,7 +20,7 @@ export class EmailService {
         this._transporter.close();
     }
 
-    public static async sendMail(toMail: string, subject: string, text: string) {
+    public static async sendMail(toMail: string, subject: string, text: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
 
             let mailOptions: MailOptions = {
