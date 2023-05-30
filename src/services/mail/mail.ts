@@ -1,20 +1,13 @@
 import nodemailer from "nodemailer";
 import { MailOptions } from "nodemailer/lib/json-transport";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 export class EmailService {
-    private static _transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST || "smtp.gmail.com",
-        port: parseInt(process.env.MAIL_PORT || "465"),
-        service: process.env.MAIL_SERVICE,
-        secure: true,
-        auth: {
-            user: process.env.MAIL_USERNAME,
-            pass: process.env.MAIL_PASSWORD
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    });
+    private static _transporter: nodemailer.Transporter;
+
+    public static initTransporter(options: SMTPTransport.Options) {
+        this._transporter = nodemailer.createTransport(options)
+    }
 
     public static closeTransporter() {
         this._transporter.close();

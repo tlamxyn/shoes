@@ -1,6 +1,7 @@
 import {Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute } from "sequelize";
 import { Permission } from "./permission";
 import { Verification } from "./verification";
+import { PASSWORD_LENGTH, SALT_LENGTH } from "../contant";
 
 export enum Gender {
     Other = "Other",
@@ -59,11 +60,11 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
                 allowNull: false
             },
             Password: {
-                type: DataTypes.STRING(50),
+                type: DataTypes.STRING(PASSWORD_LENGTH),
                 allowNull: false
             },
             Salt: {
-                type: DataTypes.STRING(20),
+                type: DataTypes.STRING(SALT_LENGTH),
                 allowNull: false
             },
             Gender: {

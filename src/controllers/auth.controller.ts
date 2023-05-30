@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { Status, User } from "../models/user";
-import { PasswordGenerator } from "../services/password/password";
+import { PasswordGenerator } from "../utils/password";
 import { OK, Created, Unauthorized, InternalServerError, BadRequest } from "../services/response_content/response_content";
 import { randomDigitByTime } from "../utils/random_digit";
 import { EmailService } from "../services/mail/mail";
@@ -9,6 +9,7 @@ import { MySQL } from "../database/database";
 import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE, VERIFY_EMAIL_CODE_FAILTIME } from "../contant";
 import JWT from "jsonwebtoken";
 import { CRUD, Permission, Role, Table } from "../models/permission";
+import { setCookies } from "../utils/request_header";
 
 export default class AuthController {
     public static async Register(req: Request, res: Response): Promise<Response> {
@@ -130,6 +131,8 @@ export default class AuthController {
                 return BadRequest(res, { message: "Your account has been locked" });
             }
 
+            // Check Expiration
+
             // Check Code
             if (EmailCode != verification.Code) {
                 await verification.update({
@@ -138,21 +141,20 @@ export default class AuthController {
                 return BadRequest(res, { message: "Verify Email Code Wrong" });
             }
 
-            // Active Accoutn
+            // Active Account
             await user.update({ Status: Status.Available }, { transaction: transaction });
 
             // Delete verication
             await verification.destroy({ transaction: transaction });
 
             // Add Permission
-            const isPer = await Permission.findOrCreate({
-                where: {
-                    UserID: user.ID,
-                    Role: Role.Customer,
-                    Table: Table.ALL,
-                    CRUD: CRUD.All
-                }
-            })
+            const isPer = await Permission.upsert({
+                UserID: user.ID,
+                Role: Role.Customer,
+                Table: Table.ALL,
+                CRUD: CRUD.All
+            }, { transaction: transaction });
+
             if (!isPer) {
                 await transaction.rollback();
                 return InternalServerError(res, { message: "Fail to add permission" });
@@ -198,7 +200,7 @@ export default class AuthController {
             const accessToken = JWT.sign(
                 { "ID": user.ID, "Username": user.Username },
                 accessKey,
-                { algorithm: "RS512", expiresIn: ACCESS_TOKEN_AGE }
+                { algorithm: "HS512", expiresIn: ACCESS_TOKEN_AGE }
             );
 
             // Generate refresh token
@@ -206,15 +208,15 @@ export default class AuthController {
             const refreshToken = JWT.sign(
                 { ID: user.ID, Username: user.Username },
                 refreshKey,
-                { algorithm: "RS512", expiresIn: REFRESH_TOKEN_AGE }
+                { algorithm: "HS512", expiresIn: REFRESH_TOKEN_AGE }
             );
 
-            return OK(res, {
-                data: {
-                    AccessToken: accessToken,
-                    RefreshToken: refreshToken
-                }
-            });
+            setCookies(res, {
+                AccessToken: accessToken,
+                RefreshToken: refreshToken
+            }, { httpOnly: true })
+
+            return OK(res);
         } catch (error) {
             console.log(error)
             return InternalServerError(res, { message: error });

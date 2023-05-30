@@ -1,4 +1,4 @@
-import { DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NUMBER, NonAttribute, Sequelize } from "sequelize";
 import { User } from "./user";
 
 export enum VType {
@@ -36,16 +36,17 @@ export class Verification extends Model<InferAttributes<Verification>, InferCrea
             },
             Code: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: false
             },
             Time: {
-                type: DataTypes.NUMBER,
+                type: DataTypes.TINYINT,
                 allowNull: false,
                 defaultValue: 0
             }
         }, {
             sequelize,
             modelName: "Verification",
+            timestamps: false
         });
 
         return Verification;

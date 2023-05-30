@@ -71,6 +71,7 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
         }, {
             sequelize,
             modelName: "Permission",
+            timestamps: false
         });
 
         return Permission
