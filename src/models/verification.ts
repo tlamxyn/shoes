@@ -12,6 +12,7 @@ export class Verification extends Model<InferAttributes<Verification>, InferCrea
     declare VName: string;
     declare Code: string;
     declare Time: number;
+    declare ExpiredAt: Date;
 
     public static defindVerification(sequelize: Sequelize): NonAttribute<typeof Verification> {
         if (sequelize.models.Verification === Verification) return Verification;
@@ -42,6 +43,10 @@ export class Verification extends Model<InferAttributes<Verification>, InferCrea
                 type: DataTypes.TINYINT,
                 allowNull: false,
                 defaultValue: 0
+            },
+            ExpiredAt: {
+                type: DataTypes.DATE,
+                allowNull: false
             }
         }, {
             sequelize,

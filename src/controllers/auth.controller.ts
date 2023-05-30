@@ -6,7 +6,7 @@ import { randomDigitByTime } from "../utils/random_digit";
 import { EmailService } from "../services/mail/mail";
 import { VType, Verification } from "../models/verification";
 import { MySQL } from "../database/database";
-import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE, VERIFY_EMAIL_CODE_FAILTIME } from "../contant";
+import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE, VERIFY_EMAIL_CODE_FAILTIME, VERIFY_EMAIL_CODE_MAXAGE } from "../contant";
 import JWT from "jsonwebtoken";
 import { CRUD, Permission, Role, Table } from "../models/permission";
 import { setCookies } from "../utils/request_header";
@@ -36,6 +36,7 @@ export default class AuthController {
                 if (existedUser.Status == Status.Available ||
                     existedUser.Status == Status.Locked
                 ) {
+                    await transaction.rollback();
                     return BadRequest(res, { message: "Email Existed" });
                 }
             }
@@ -67,7 +68,8 @@ export default class AuthController {
                 VType: VType.Email,
                 VName: user.Email,
                 Code: emailCode,
-                Time: 0
+                Time: 0,
+                ExpiredAt: new Date(Date.now() + VERIFY_EMAIL_CODE_MAXAGE)
             }, { transaction: transaction });
             if (!isCreated) {
                 await transaction.rollback();
@@ -99,6 +101,68 @@ export default class AuthController {
         }
     }
 
+    public static async ResendEmail(req: Request, res: Response): Promise<Response> {
+        const transaction = await MySQL.sequelize!.transaction();
+        try {
+            const { Email } = req.body;
+
+            // Check User Existence
+            const user = await User.findOne({
+                where: {
+                    Email: Email
+                }
+            });
+            if (!user) {
+                await transaction.rollback();
+                return BadRequest(res, { message: "This Email Is Not Existed" });
+            }
+
+            if(user.Status === Status.Available) {
+                await transaction.rollback();
+                return BadRequest(res, { message: "This Email is already Verified" });
+            }
+
+            if(user.Status === Status.Locked) {
+                await transaction.rollback();
+                return BadRequest(res, { message: "This Email is already Locked, contact to Admin for more infos" });
+            }
+
+            // Generate Email Code
+            const emailCode = randomDigitByTime(6);
+            const isCreated = await Verification.upsert({
+                UserID: user.ID,
+                VType: VType.Email,
+                VName: user.Email,
+                Code: emailCode,
+                Time: 0,
+                ExpiredAt: new Date(Date.now() + VERIFY_EMAIL_CODE_MAXAGE)
+            }, { transaction: transaction });
+            if (!isCreated) {
+                await transaction.rollback();
+                return InternalServerError(res, { message: "Generate Verify Code Fail" });
+            }
+
+            // Send Mail
+            const isSent = await EmailService.sendMail(
+                Email,
+                "SHOES - Send Verify Code",
+                `Your verify code is ${emailCode}`
+            );
+            if (!isSent) {
+                await transaction.rollback();
+                return InternalServerError(res, { message: "Send Verify Code Fail" });
+            }
+
+            return Created(res, {
+                message: "Resend Email Completed"
+            })
+        } catch (error) {
+            console.log(error)
+            await transaction.rollback();
+            return InternalServerError(res, { message: error });
+        }
+    }
+
     public static async VerifyEmail(req: Request, res: Response): Promise<Response> {
 
         const transaction = await MySQL.sequelize!.transaction();
@@ -112,6 +176,7 @@ export default class AuthController {
                 },
             });
             if (!user) {
+                await transaction.rollback();
                 return BadRequest(res, { message: "Can't find Email" });
             }
 
@@ -122,22 +187,29 @@ export default class AuthController {
                 }
             })
             if (!verification) {
+                await transaction.rollback();
                 return InternalServerError(res, { message: "Verify Email Code Still Not Created" });
             }
 
             // Check Wrong Time
             if (verification.Time >= VERIFY_EMAIL_CODE_FAILTIME) {
                 await user.update({ Status: Status.Locked }, { transaction: transaction });
+                await transaction.commit();
                 return BadRequest(res, { message: "Your account has been locked" });
             }
 
             // Check Expiration
+            if (Date.now() - verification.ExpiredAt.getTime() > VERIFY_EMAIL_CODE_MAXAGE) {
+                await transaction.rollback();
+                return BadRequest(res, { message: "Verify Email Code is Expired" });
+            }
 
             // Check Code
             if (EmailCode != verification.Code) {
                 await verification.update({
                     Time: verification.Time + 1
                 }, { transaction: transaction });
+                await transaction.commit();
                 return BadRequest(res, { message: "Verify Email Code Wrong" });
             }
 

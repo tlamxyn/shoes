@@ -1,5 +1,10 @@
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
+export const ONE_SECOND_IN_MILISECOND = 1000;
+export const ONE_MINUTE_IN_MILISECOND = 60 * ONE_SECOND_IN_MILISECOND;
+export const ONE_HOUR_IN_MILISECOND = 60 * ONE_MINUTE_IN_MILISECOND;
+export const ONE_DAY_IN_MILISECOND =  24 * ONE_HOUR_IN_MILISECOND;
+
 export const VERIFY_EMAIL_CODE_FAILTIME = 3;
 export const ACCESS_TOKEN_AGE = "1h";
 export const REFRESH_TOKEN_AGE = "30d";
@@ -16,3 +21,5 @@ export const SMTPTransportOptions = {
         rejectUnauthorized: false
     }
 } as SMTPTransport.Options;
+export const VERIFY_EMAIL_CODE_MAXAGE = ONE_MINUTE_IN_MILISECOND * 3;
+
