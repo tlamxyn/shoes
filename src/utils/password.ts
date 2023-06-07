@@ -22,7 +22,7 @@ const isValidPassword = (
 ): boolean => {
     const salt = target_salt_first + salt_extend;
     let check_hash = crypto
-        .pbkdf2Sync(password, salt, 2000, 120, "sha512")
+        .pbkdf2Sync(password, salt, 2000, PASSWORD_LENGTH/2, "sha512")
         .toString("hex");
 
     return check_hash == target_hash;

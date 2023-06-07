@@ -6,7 +6,7 @@ export const ONE_HOUR_IN_MILISECOND = 60 * ONE_MINUTE_IN_MILISECOND;
 export const ONE_DAY_IN_MILISECOND =  24 * ONE_HOUR_IN_MILISECOND;
 
 export const VERIFY_EMAIL_CODE_FAILTIME = 3;
-export const ACCESS_TOKEN_AGE = "1h";
+export const ACCESS_TOKEN_AGE = "5m";
 export const REFRESH_TOKEN_AGE = "30d";
 
 export const PASSWORD_LENGTH = 240;

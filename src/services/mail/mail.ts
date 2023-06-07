@@ -10,7 +10,7 @@ export class EmailService {
     }
 
     public static closeTransporter() {
-        this._transporter.close();
+        this._transporter?.close();
     }
 
     public static async sendMail(toMail: string, subject: string, text: string): Promise<boolean> {

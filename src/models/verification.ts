@@ -1,4 +1,4 @@
-import { DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NUMBER, NonAttribute, Sequelize } from "sequelize";
+import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NUMBER, NonAttribute, Sequelize } from "sequelize";
 import { User } from "./user";
 
 export enum VType {
@@ -7,7 +7,7 @@ export enum VType {
 }
 
 export class Verification extends Model<InferAttributes<Verification>, InferCreationAttributes<Verification>> {
-    declare UserID: ForeignKey<string>;
+    declare UserID: CreationOptional<ForeignKey<string>>;
     declare VType: VType;
     declare VName: string;
     declare Code: string;
@@ -21,7 +21,6 @@ export class Verification extends Model<InferAttributes<Verification>, InferCrea
             UserID: {
                 type: DataTypes.UUID,
                 primaryKey: true,
-                defaultValue: DataTypes.UUIDV4
             },
             VType: {
                 type: DataTypes.ENUM({
@@ -62,7 +61,7 @@ export class Verification extends Model<InferAttributes<Verification>, InferCrea
 
         if (sequelize.models.User != User) return false;
 
-        Verification.belongsTo(User, {foreignKey: "UserID"});
+        Verification.belongsTo(User, { foreignKey: "UserID", as: "user" });
 
         return true;
     }

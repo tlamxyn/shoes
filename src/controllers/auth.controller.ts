@@ -2,14 +2,17 @@ import { Request, Response } from "express"
 import { Status, User } from "../models/user";
 import { PasswordGenerator } from "../utils/password";
 import { OK, Created, Unauthorized, InternalServerError, BadRequest } from "../services/response_content/response_content";
-import { randomDigitByTime } from "../utils/random_digit";
+import { randomDigitByTime, randomSecretKey } from "../utils/random";
 import { EmailService } from "../services/mail/mail";
 import { VType, Verification } from "../models/verification";
 import { MySQL } from "../database/database";
-import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE, VERIFY_EMAIL_CODE_FAILTIME, VERIFY_EMAIL_CODE_MAXAGE } from "../contant";
-import JWT from "jsonwebtoken";
+import { VERIFY_EMAIL_CODE_FAILTIME, VERIFY_EMAIL_CODE_MAXAGE } from "../contant";
 import { CRUD, Permission, Role, Table } from "../models/permission";
 import { setCookies } from "../utils/request_header";
+import { Device } from "../models/device";
+import { SecretKey } from "../models/secretkey";
+import { Op } from "sequelize";
+import { SignAccessToken, SignRefreshToken } from "../utils/jwt";
 
 export default class AuthController {
     public static async Register(req: Request, res: Response): Promise<Response> {
@@ -117,12 +120,12 @@ export default class AuthController {
                 return BadRequest(res, { message: "This Email Is Not Existed" });
             }
 
-            if(user.Status === Status.Available) {
+            if (user.Status === Status.Available) {
                 await transaction.rollback();
                 return BadRequest(res, { message: "This Email is already Verified" });
             }
 
-            if(user.Status === Status.Locked) {
+            if (user.Status === Status.Locked) {
                 await transaction.rollback();
                 return BadRequest(res, { message: "This Email is already Locked, contact to Admin for more infos" });
             }
@@ -152,6 +155,8 @@ export default class AuthController {
                 await transaction.rollback();
                 return InternalServerError(res, { message: "Send Verify Code Fail" });
             }
+
+            await transaction.commit();
 
             return Created(res, {
                 message: "Resend Email Completed"
@@ -244,11 +249,30 @@ export default class AuthController {
     public static async Login(req: Request, res: Response): Promise<Response> {
 
         const { Email, Password } = req.body;
+        const DeviceName = req.cookies['DeviceName'] ?? null;
 
         try {
 
+            // Find device
+            const device = await Device.findOne({ where: { Name: DeviceName } })
+
+            // Check valid device
+            if (!device) {
+                return Unauthorized(res, { message: `We don't support ${DeviceName} device` });
+            }
+
             // Find User
-            const user = await User.findOne({ where: { Email: Email } });
+            const user = await User.findOne({
+                where: {
+                    [Op.and]: [
+                        { Email: Email },
+                        {
+                            Status: {
+                                [Op.ne]: Status.Unavailable
+                            }
+                        }]
+                }
+            });
 
             // Check User existence
             if (!user) {
@@ -268,24 +292,22 @@ export default class AuthController {
             }
 
             // Generate access token
-            const accessKey = process.env.ACCESS_PRIVATE_KEY || "123456789ADOC";
-            const accessToken = JWT.sign(
-                { "ID": user.ID, "Username": user.Username },
-                accessKey,
-                { algorithm: "HS512", expiresIn: ACCESS_TOKEN_AGE }
-            );
+            const accessToken = SignAccessToken({ "ID": user.ID, "Username": user.Username });
 
             // Generate refresh token
-            const refreshKey = process.env.REFRESH_PRIVATE_KEY || "987654321ADOC";
-            const refreshToken = JWT.sign(
-                { ID: user.ID, Username: user.Username },
-                refreshKey,
-                { algorithm: "HS512", expiresIn: REFRESH_TOKEN_AGE }
-            );
+            const refreshKey = randomSecretKey();
+            const token = await SecretKey.upsert({
+                UserID: user.ID,
+                DeviceID: device.ID,
+                Key: refreshKey
+            });
+            if (!token) return InternalServerError(res, { message: "Fail to generate token" });
+            const refreshToken = SignRefreshToken({ ID: user.ID, Username: user.Username }, refreshKey);
 
             setCookies(res, {
                 AccessToken: accessToken,
-                RefreshToken: refreshToken
+                RefreshToken: refreshToken,
+                DeviceName: device.Name
             }, { httpOnly: true })
 
             return OK(res);

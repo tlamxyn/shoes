@@ -1,7 +1,19 @@
-import {Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute } from "sequelize";
+import {
+    Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional,
+    NonAttribute, Association
+} from "sequelize";
 import { Permission } from "./permission";
 import { Verification } from "./verification";
+import { Address } from "./address";
 import { PASSWORD_LENGTH, SALT_LENGTH } from "../contant";
+import { SecretKey } from "./secretkey";
+import { UserNotification } from "./usernotification";
+import { Problem } from "./problem";
+import { Review } from "./review";
+import { Favorite } from "./favorite";
+import { Invoice } from "./invoice";
+import { ShipWork } from "./shipwork";
+import { Cart } from "./cart";
 
 export enum Gender {
     Other = "Other",
@@ -34,6 +46,35 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare CreatedAt: CreationOptional<Date>;
     declare UpdatedAt: CreationOptional<Date>;
     declare DeletedAt: CreationOptional<Date | null>;
+
+    //
+
+    // Can be used by add 'include' relation in query
+    declare permissions: NonAttribute<Permission[]>;
+    declare verification: NonAttribute<Verification>;
+    declare addresses: NonAttribute<Address[]>;
+    declare tokens: NonAttribute<SecretKey[]>;
+    declare user_notifications: NonAttribute<UserNotification[]>;
+    declare problems: NonAttribute<Problem[]>;
+    declare reviews: NonAttribute<Review[]>;
+    declare favorites: NonAttribute<Favorite[]>;
+    declare invoices: NonAttribute<Invoice[]>;
+    declare shipworks: NonAttribute<ShipWork[]>;
+    declare carts: NonAttribute<Cart[]>;
+
+    declare static associations: {
+        permissions: Association<User, Permission>,
+        verification: Association<User, Verification>,
+        addresses: Association<User, Address>,
+        tokens: Association<User, SecretKey>,
+        user_notifications: Association<User, UserNotification>,
+        problems: Association<User, Problem>,
+        reviews: Association<User, Review>,
+        favorites: Association<User, Favorite>,
+        invoices: Association<User, Invoice>,
+        shipworks: Association<User, ShipWork>,
+        carts: Association<User, Cart>
+    };
 
     public static defineUser(sequelize: Sequelize): NonAttribute<typeof User> {
 
@@ -104,7 +145,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
 
         if (sequelize.models.Permission != Permission) return false;
 
-        User.hasMany(Permission, {foreignKey: "UserID", sourceKey: "ID"});
+        User.hasMany(Permission, { foreignKey: "UserID", sourceKey: "ID", as: "permissions" });
 
         return true;
     }
@@ -114,7 +155,17 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
 
         if (sequelize.models.Verification != Verification) return false;
 
-        User.hasMany(Verification, {foreignKey: "UserID", sourceKey: "ID"});
+        User.hasOne(Verification, { foreignKey: "UserID", sourceKey: "ID", as: "verification"});
+
+        return true;
+    }
+
+    public static associateSecretKey(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.SecretKey != SecretKey) return false;
+
+        User.hasMany(SecretKey, { foreignKey: "UserID", sourceKey: "ID", as: "secretkeys" });
 
         return true;
     }

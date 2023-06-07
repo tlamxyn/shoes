@@ -82,7 +82,7 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
 
         if (sequelize.models.User != User) return false;
 
-        Permission.belongsTo(User, {foreignKey: "UserID"});
+        Permission.belongsTo(User, { foreignKey: "UserID", as: "user" });
 
         return true;
     }

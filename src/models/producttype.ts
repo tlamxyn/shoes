@@ -1,8 +1,8 @@
-import { CreateOptions, DataTypes, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
 import { Product } from "./product";
 
 export class ProductType extends Model<InferAttributes<ProductType>, InferCreationAttributes<ProductType>> {
-    declare ID: CreateOptions<String>
+    declare ID: CreationOptional<String>
     declare Name: String;
 
     public static defineProductType(sequelize: Sequelize): NonAttribute<typeof ProductType> {
@@ -11,9 +11,8 @@ export class ProductType extends Model<InferAttributes<ProductType>, InferCreati
 
         this.init({
             ID: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true
             },
             Name: {
                 type: DataTypes.STRING(50),
@@ -22,18 +21,9 @@ export class ProductType extends Model<InferAttributes<ProductType>, InferCreati
         }, {
             sequelize,
             modelName: 'ProductType',
+            timestamps: false,
         });
 
         return ProductType;
-    }
-
-    public static associateProduct(sequelize: Sequelize): NonAttribute<boolean> {
-        if (sequelize.models.ProductType != ProductType) return false;
-
-        if (sequelize.models.Product != Product) return false;
-
-        ProductType.hasMany(Product, {foreignKey: "ProductTypeID", sourceKey: 'ID'});
-
-        return true;
     }
 }
