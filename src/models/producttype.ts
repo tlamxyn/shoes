@@ -1,9 +1,15 @@
-import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Association, CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
 import { Product } from "./product";
 
 export class ProductType extends Model<InferAttributes<ProductType>, InferCreationAttributes<ProductType>> {
     declare ID: CreationOptional<String>
     declare Name: String;
+
+    declare products: NonAttribute<Product[]>;
+
+    declare static associations: {
+        products: Association<ProductType, Product>
+    }
 
     public static defineProductType(sequelize: Sequelize): NonAttribute<typeof ProductType> {
 
@@ -25,5 +31,15 @@ export class ProductType extends Model<InferAttributes<ProductType>, InferCreati
         });
 
         return ProductType;
+    }
+
+    public static associateProduct(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.ProductType != ProductType) return false;
+
+        if (sequelize.models.Product != Product) return false;
+
+        ProductType.hasMany(Product, { foreignKey: "ProductTypeID", sourceKey: "ID", as: "products" });
+
+        return true;
     }
 }

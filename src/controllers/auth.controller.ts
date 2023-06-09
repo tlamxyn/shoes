@@ -318,6 +318,51 @@ export default class AuthController {
     }
 
     public static async Logout(req: Request, res: Response): Promise<Response> {
-        return OK(res);
+        try {
+            setCookies(res, {
+                AccessToken: '',
+                RefreshToken: '',
+                DeviceName: req.cookies['DeviceName'] ?? null
+            }, { httpOnly: true })
+
+            return OK(res);
+        } catch (error) {
+            console.log(error)
+            return InternalServerError(res, { message: error });
+        }
+    }
+
+    public static async ResetPassword(req: Request, res: Response): Promise<Response> {
+        const {
+            OldPassword = null, NewPassword = null
+        } = req.body;
+
+        const transaction = await MySQL.sequelize!.transaction();
+
+        try {
+            const user = await User.findOne({ where: { ID: res.locals.UserID } });
+
+            // Check Old Password Correction
+            const isValidOldPassword = PasswordGenerator
+                .isValidPassword(OldPassword, user!.Password ?? "", user!.Salt ?? "");
+            if (!isValidOldPassword) {
+                return Unauthorized(res, { message: "Password incorrect" });
+            }
+
+            // Update New Password
+            const { salt, hash } = PasswordGenerator.createPasswordHash(NewPassword);
+            const updatedUser = await user!.update({ Salt: salt, Password: hash }, { transaction: transaction });
+
+            if (!updatedUser) {
+                await transaction.rollback();
+                return InternalServerError(res, { message: "Reset Password Failed" })
+            }
+
+            return OK(res);
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error)
+            return InternalServerError(res, { message: error });
+        }
     }
 }

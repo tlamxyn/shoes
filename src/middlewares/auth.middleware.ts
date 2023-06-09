@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { InternalServerError, Unauthorized } from "../services/response_content/response_content";
+import { InternalServerError, NotFound, Unauthorized } from "../services/response_content/response_content";
 import { GetPayload, SignAccessToken, VerifyAccessToken, VerifyRefreshToken, isExpiredJwtError } from "../utils/jwt";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { Status, User } from "../models/user";
@@ -7,12 +7,17 @@ import { SecretKey } from "../models/secretkey";
 import { Device } from "../models/device";
 import { Op } from "sequelize";
 import { setCookies } from "../utils/request_header";
+import { Permission, Role, Table } from "../models/permission";
+import { verifyPermissionRequirement } from "../utils/authorization";
 
 /**
  * 
  * @description 
  * It checks the existence of the two token,
- * then verifies them
+ * then verifies them.
+ * 
+ * In this function, it also check the existence of the user trying to call api.
+ * Additionally, all users that still not being locked can be passed.
  */
 export async function Authentication(req: Request, res: Response, next: NextFunction) {
     try {
@@ -89,6 +94,54 @@ export async function Authentication(req: Request, res: Response, next: NextFunc
     }
 }
 
-export async function Authorization(req: Request, res: Response, next: NextFunction) {
+type PerCheck = Pick<Permission, 'Table' | 'CRUD'>
+/**
+ * 
+ * @description
+ * Check user Permission.
+ * The `Authentication` middleware must be in front of this function in router
+ */
+export function Authorization(role: Role = Role.Customer, percheck: PerCheck[] = []): Function {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            if (!res.locals.UserID) {
+                return NotFound(res, {});
+            }
 
+            // Check role
+            const permissions = await Permission.findAll({
+                where: {
+                    [Op.and]: { UserID: res.locals.UserID, Role: role }
+                }
+            })
+            if (!permissions) {
+                return Unauthorized(res, { message: "Không đủ quyền hạn truy cập" })
+            }
+
+            // Check Table 
+            // Regardless what table permission is, if "all" table exists, 
+            // then it overrides all other table permissions.
+            const completedper: PerCheck[] = percheck.filter(per => {
+                // Check if `all` table is existed
+                let allTable = permissions.find(value => value.Table == Table.ALL);
+                // If `all` table is existed then check CRUD, if not then check normal table
+                if (allTable) {
+                    return verifyPermissionRequirement(per.CRUD ,allTable.CRUD)
+                }
+                // Check if normal table is existed
+                let normalTable = permissions.find(value =>value.Table == per.Table)
+                if(normalTable) {
+                    return verifyPermissionRequirement(per.CRUD, normalTable.CRUD)
+                }
+                return false
+            })
+            if (completedper.length != percheck.length) {
+                return Unauthorized(res, { message: "Không đủ quyền hạn truy cập" })
+            }
+            next();
+        } catch (error) {
+            console.log(error);
+            return InternalServerError(res, { message: error })
+        }
+    }
 }
