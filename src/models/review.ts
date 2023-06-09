@@ -5,6 +5,7 @@ import { Invoice } from "./invoice";
 import { User } from "./user";
 
 export class Review extends Model<InferAttributes<Review>, InferCreationAttributes<Review>> {
+    declare ID: CreationOptional<string>;
     declare UserID: ForeignKey<string>;
     declare ProductID: ForeignKey<string>;
     declare InvoiceID: ForeignKey<string>;
@@ -29,17 +30,22 @@ export class Review extends Model<InferAttributes<Review>, InferCreationAttribut
         if (sequelize.models.Review === Review) return Review;
 
         this.init({
+            ID: {
+                type: DataTypes.UUID,
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
+            },
             UserID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                allowNull: false
             },
             ProductID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                allowNull: false
             },
             InvoiceID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                allowNull: false
             },
             Content: {
                 type: DataTypes.STRING,
@@ -58,6 +64,10 @@ export class Review extends Model<InferAttributes<Review>, InferCreationAttribut
             createdAt: 'CreatedAt',
             updatedAt: false,
             deletedAt: false,
+            indexes: [{
+                unique: true,
+                fields: ['UserID', 'ProductID', 'InvoiceID']
+            }]
         });
 
         return Review;

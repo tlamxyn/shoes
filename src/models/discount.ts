@@ -23,6 +23,7 @@ export class Discount extends Model<InferAttributes<Discount>, InferCreationAttr
             ID: {
                 type: DataTypes.UUID,
                 primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Discount: {
                 type: DataTypes.FLOAT,

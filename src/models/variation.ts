@@ -25,7 +25,8 @@ export class Variation extends Model<InferAttributes<Variation>, InferCreationAt
         this.init({
             ID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Name: {
                 type: DataTypes.STRING,

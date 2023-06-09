@@ -35,6 +35,7 @@ export class Product extends Model<InferAttributes<Product>, InferCreationAttrib
         this.init({
             ID: {
                 type: DataTypes.UUID,
+                defaultValue: DataTypes.UUIDV4,
                 primaryKey: true
             },
             Name: {

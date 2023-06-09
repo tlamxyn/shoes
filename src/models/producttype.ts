@@ -19,6 +19,7 @@ export class ProductType extends Model<InferAttributes<ProductType>, InferCreati
             ID: {
                 type: DataTypes.UUID,
                 primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Name: {
                 type: DataTypes.STRING(50),

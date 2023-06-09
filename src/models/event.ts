@@ -27,7 +27,8 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
         this.init({
             ID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Title: {
                 type: DataTypes.STRING,

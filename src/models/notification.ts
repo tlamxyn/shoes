@@ -23,7 +23,8 @@ export class Notification extends Model<InferAttributes<Notification>, InferCrea
         this.init({
             ID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Title: {
                 type: DataTypes.STRING,
@@ -59,7 +60,7 @@ export class Notification extends Model<InferAttributes<Notification>, InferCrea
 
         if (sequelize.models.Image != Image) return false;
 
-        Notification.hasMany(Image, { foreignKey: "NotificationID", sourceKey: "ID", as: "images" });
+        Notification.hasMany(Image, { foreignKey: "OwnerID", sourceKey: "ID", as: "images" });
 
         return true;
     }

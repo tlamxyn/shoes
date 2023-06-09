@@ -40,7 +40,8 @@ export class Invoice extends Model<InferAttributes<Invoice>, InferCreationAttrib
         this.init({
             ID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             UserID: {
                 type: DataTypes.UUID,

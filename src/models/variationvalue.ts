@@ -22,6 +22,7 @@ export class VariationValue extends Model<InferAttributes<VariationValue>, Infer
         this.init({
             ID: {
                 type: DataTypes.UUID,
+                defaultValue: DataTypes.UUIDV4,
                 primaryKey: true
             },
             VariationID: {

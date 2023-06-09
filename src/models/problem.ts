@@ -31,7 +31,8 @@ export class Problem extends Model<InferAttributes<Problem>, InferCreationAttrib
         this.init({
             ID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             UserID: {
                 type: DataTypes.UUID,
@@ -78,7 +79,7 @@ export class Problem extends Model<InferAttributes<Problem>, InferCreationAttrib
 
         if (sequelize.models.Image != Image) return false;
 
-        Problem.hasMany(Image, { foreignKey: "ProblemID", sourceKey: "ID", as: "images" });
+        Problem.hasMany(Image, { foreignKey: "OwnerID", sourceKey: "ID", as: "images" });
 
         return true;
     }

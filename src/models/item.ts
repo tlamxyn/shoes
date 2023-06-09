@@ -36,7 +36,8 @@ export class Item extends Model<InferAttributes<Item>, InferCreationAttributes<I
         this.init({
             ID: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             ProductID: {
                 type: DataTypes.UUID,

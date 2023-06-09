@@ -19,6 +19,7 @@ export class Device extends Model<InferAttributes<Device>, InferCreationAttribut
             ID: {
                 type: DataTypes.UUID,
                 primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             Name: {
                 type: DataTypes.STRING,
