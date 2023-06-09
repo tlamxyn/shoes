@@ -11,6 +11,29 @@ export enum Table {
     ALL = "all",
     user = "user",
     permission = "permission",
+    verification = "verification",
+    address = "address",
+    secretkey = "secretkey",
+    device = "device",
+    notification = "notification",
+    usernotification = "usernotification",
+    shipwork = "shipwork",
+    problem = "problem",
+    favorite = "favorite",
+    cart = "cart",
+    item = "item",
+    product = "product",
+    producttype = "producttype",
+    invoice = "invoice",
+    invoicedetail = "invoicedetail",
+    review = "review",
+    image = "image",
+    event = "event",
+    discount = "discount",
+    discountitem = "discountitem",
+    variation = "variation",
+    variationvalue = "variationvalue",
+    variationvaluegroup = "variationvaluegroup"
 }
 
 export enum CRUD {
@@ -29,7 +52,6 @@ export enum CRUD {
     CreateReadDelete = "1101",
     CreateUpdateDelete = "1011",
     ReadUpdateDelete = "0111"
-
 }
 
 export class Permission extends Model<InferAttributes<Permission>, InferCreationAttributes<Permission>> {
@@ -50,8 +72,7 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
         this.init({
             UserID: {
                 type: DataTypes.UUID,
-                primaryKey: true,
-                defaultValue: DataTypes.UUIDV4
+                primaryKey: true
             },
             Role: {
                 type: DataTypes.ENUM({
