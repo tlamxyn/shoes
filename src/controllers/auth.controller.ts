@@ -358,6 +358,7 @@ export default class AuthController {
                 return InternalServerError(res, { message: "Reset Password Failed" })
             }
 
+            await transaction.commit();
             return OK(res);
         } catch (error) {
             await transaction.rollback();

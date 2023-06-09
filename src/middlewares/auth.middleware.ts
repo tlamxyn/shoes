@@ -101,7 +101,7 @@ type PerCheck = Pick<Permission, 'Table' | 'CRUD'>
  * Check user Permission.
  * The `Authentication` middleware must be in front of this function in router
  */
-export function Authorization(role: Role = Role.Customer, percheck: PerCheck[] = []): Function {
+export function Authorization(role: Role = Role.Customer, percheck: PerCheck[] = []) {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             if (!res.locals.UserID) {
