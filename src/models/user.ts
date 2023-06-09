@@ -54,7 +54,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare verification: NonAttribute<Verification>;
     declare addresses: NonAttribute<Address[]>;
     declare tokens: NonAttribute<SecretKey[]>;
-    declare user_notifications: NonAttribute<UserNotification[]>;
+    declare usernotifications: NonAttribute<UserNotification[]>;
     declare problems: NonAttribute<Problem[]>;
     declare reviews: NonAttribute<Review[]>;
     declare favorites: NonAttribute<Favorite[]>;
@@ -67,7 +67,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         verification: Association<User, Verification>,
         addresses: Association<User, Address>,
         tokens: Association<User, SecretKey>,
-        user_notifications: Association<User, UserNotification>,
+        usernotifications: Association<User, UserNotification>,
         problems: Association<User, Problem>,
         reviews: Association<User, Review>,
         favorites: Association<User, Favorite>,
@@ -166,6 +166,78 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         if (sequelize.models.SecretKey != SecretKey) return false;
 
         User.hasMany(SecretKey, { foreignKey: "UserID", sourceKey: "ID", as: "secretkeys" });
+
+        return true;
+    }
+    public static associateAddress(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Address != Address) return false;
+
+        User.hasMany(Address, { foreignKey: "UserID", sourceKey: "ID", as: "addresses" });
+
+        return true;
+    }
+    public static associateUserNotification(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.UserNotification != UserNotification) return false;
+
+        User.hasMany(UserNotification, { foreignKey: "UserID", sourceKey: "ID", as: "usernotifications" });
+
+        return true;
+    }
+    public static associateCart(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Cart != Cart) return false;
+
+        User.hasMany(Cart, { foreignKey: "UserID", sourceKey: "ID", as: "carts" });
+
+        return true;
+    }
+    public static associateShipWork(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.ShipWork != ShipWork) return false;
+
+        User.hasMany(ShipWork, { foreignKey: "UserID", sourceKey: "ID", as: "shipworks" });
+
+        return true;
+    }
+    public static associateInvoice(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Invoice != Invoice) return false;
+
+        User.hasMany(Invoice, { foreignKey: "UserID", sourceKey: "ID", as: "invoices" });
+
+        return true;
+    }
+    public static associateFavorite(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Favorite != Favorite) return false;
+
+        User.hasMany(Favorite, { foreignKey: "UserID", sourceKey: "ID", as: "favorites" });
+
+        return true;
+    }
+    public static associateReview(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Review != Review) return false;
+
+        User.hasMany(Review, { foreignKey: "UserID", sourceKey: "ID", as: "reviews" });
+
+        return true;
+    }
+    public static associateProblem(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Problem != Problem) return false;
+
+        User.hasMany(Problem, { foreignKey: "UserID", sourceKey: "ID", as: "problems" });
 
         return true;
     }

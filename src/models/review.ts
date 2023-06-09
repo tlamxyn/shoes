@@ -1,4 +1,8 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Association, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Image } from "./image";
+import { Product } from "./product";
+import { Invoice } from "./invoice";
+import { User } from "./user";
 
 export class Review extends Model<InferAttributes<Review>, InferCreationAttributes<Review>> {
     declare UserID: ForeignKey<string>;
@@ -7,6 +11,18 @@ export class Review extends Model<InferAttributes<Review>, InferCreationAttribut
     declare Content: string;
     declare Star: number;
     declare CreatedAt: CreationOptional<Date>;
+
+    declare images: NonAttribute<Image[]>;
+    declare product: NonAttribute<Product>;
+    declare invoice: NonAttribute<Invoice>;
+    declare user: NonAttribute<User>;
+
+    declare static associations: {
+        images: Association<Review, Image>,
+        product: Association<Review, Product>,
+        invoice: Association<Review, Invoice>,
+        user: Association<Review, User>
+    }
 
     public static defineReview(sequelize: Sequelize): NonAttribute<typeof Review> {
 
@@ -45,5 +61,41 @@ export class Review extends Model<InferAttributes<Review>, InferCreationAttribut
         });
 
         return Review;
+    }
+    public static associateProduct(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Review != Review) return false;
+
+        if (sequelize.models.Product != Product) return false;
+
+        Review.belongsTo(Product, { foreignKey: "ProductID", as: "product" });
+
+        return true;
+    }
+    public static associateInvoice(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Review != Review) return false;
+
+        if (sequelize.models.Invoice != Invoice) return false;
+
+        Review.belongsTo(Invoice, { foreignKey: "InvoiceID", as: "invoice" });
+
+        return true;
+    }
+    public static associateUser(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Review != Review) return false;
+
+        if (sequelize.models.User != User) return false;
+
+        Review.belongsTo(User, { foreignKey: "UserID", as: "user" });
+
+        return true;
+    }
+    public static associateImage(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Review != Review) return false;
+
+        if (sequelize.models.Image != Image) return false;
+
+        Review.hasMany(Image, { foreignKey: "OwnerID", sourceKey: "ID", as: "images" });
+
+        return true;
     }
 }

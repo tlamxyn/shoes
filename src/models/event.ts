@@ -1,4 +1,6 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Association, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Image } from "./image";
+import { Discount } from "./discount";
 
 export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
     declare ID: CreationOptional<string>;
@@ -9,6 +11,14 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
     declare ToDate: CreationOptional<Date | null>;
     declare CreatedAt: CreationOptional<Date>;
     declare UpdatedAt: CreationOptional<Date>;
+
+    declare images: NonAttribute<Image[]>;
+    declare discounts: NonAttribute<Discount[]>;
+
+    declare static associations: {
+        images: Association<Event, Image>,
+        discounts: Association<Event, Discount>
+    }
 
     public static defineEvent(sequelize: Sequelize): NonAttribute<typeof Event> {
 
@@ -50,5 +60,23 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
         });
 
         return Event;
+    }
+    public static associateDiscount(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Event != Event) return false;
+
+        if (sequelize.models.Discount != Discount) return false;
+
+        Event.hasMany(Discount, { foreignKey: "EventID", sourceKey: "ID", as: "discounts" });
+
+        return true;
+    }
+    public static associateImage(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Event != Event) return false;
+
+        if (sequelize.models.Image != Image) return false;
+
+        Event.hasMany(Image, { foreignKey: "OwnerID", sourceKey: "ID", as: "images" });
+
+        return true;
     }
 }

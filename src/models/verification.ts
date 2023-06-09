@@ -1,4 +1,4 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NUMBER, NonAttribute, Sequelize } from "sequelize";
+import { Association, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NUMBER, NonAttribute, Sequelize } from "sequelize";
 import { User } from "./user";
 
 export enum VType {
@@ -13,6 +13,12 @@ export class Verification extends Model<InferAttributes<Verification>, InferCrea
     declare Code: string;
     declare Time: number;
     declare ExpiredAt: Date;
+
+    declare user: NonAttribute<User>;
+
+    declare static associations: {
+        user: Association<Verification, User>
+    }
 
     public static defindVerification(sequelize: Sequelize): NonAttribute<typeof Verification> {
         if (sequelize.models.Verification === Verification) return Verification;

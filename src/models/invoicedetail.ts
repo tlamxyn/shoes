@@ -1,4 +1,6 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Association, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { Invoice } from "./invoice";
+import { Item } from "./item";
 
 export class InvoiceDetail extends Model<InferAttributes<InvoiceDetail>, InferCreationAttributes<InvoiceDetail>> {
     declare InvoiceID: ForeignKey<string>;
@@ -7,6 +9,13 @@ export class InvoiceDetail extends Model<InferAttributes<InvoiceDetail>, InferCr
     declare Quantity: number;
     declare DiscountID: CreationOptional<ForeignKey<string> | null>;
 
+    declare invoice: NonAttribute<Invoice>;
+    declare item: NonAttribute<Item>;
+
+    declare static associations: {
+        invoice: Association<InvoiceDetail, Invoice>,
+        item: Association<InvoiceDetail, Item>
+    }
 
     public static defineInvoiceDetail(sequelize: Sequelize): NonAttribute<typeof InvoiceDetail> {
 
@@ -37,5 +46,23 @@ export class InvoiceDetail extends Model<InferAttributes<InvoiceDetail>, InferCr
         });
 
         return InvoiceDetail;
+    }
+    public static associateInvoice(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.InvoiceDetail != InvoiceDetail) return false;
+
+        if (sequelize.models.Invoice != Invoice) return false;
+
+        InvoiceDetail.belongsTo(Invoice, { foreignKey: "InvoiceID", as: "invoice" });
+
+        return true;
+    }
+    public static associateItem(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.InvoiceDetail != InvoiceDetail) return false;
+
+        if (sequelize.models.Item != Item) return false;
+
+        InvoiceDetail.belongsTo(Item, { foreignKey: "ItemID", as: "item" });
+
+        return true;
     }
 }

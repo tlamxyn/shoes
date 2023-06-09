@@ -1,4 +1,5 @@
-import { Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey, CreationOptional } from "sequelize";
+import { Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey, CreationOptional, Association } from "sequelize";
+import { User } from "./user";
 
 export class Address extends Model<InferAttributes<Address>, InferCreationAttributes<Address>> {
     declare UserID: CreationOptional<ForeignKey<string>>;
@@ -8,6 +9,12 @@ export class Address extends Model<InferAttributes<Address>, InferCreationAttrib
     declare Detail: string;
 
     declare Phone: string;
+
+    declare user: NonAttribute<User>;
+
+    declare static associations: {
+        user: Association<Address, User>
+    }
 
     public static defineAddress(sequelize: Sequelize): NonAttribute<typeof Address> {
 
@@ -38,5 +45,14 @@ export class Address extends Model<InferAttributes<Address>, InferCreationAttrib
         });
 
         return Address;
+    }
+    public static associateUser(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.Address != Address) return false;
+
+        if (sequelize.models.User != User) return false;
+
+        Address.belongsTo(User, { foreignKey: "UserID", as: "user" });
+
+        return true;
     }
 }

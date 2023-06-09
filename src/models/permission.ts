@@ -1,4 +1,4 @@
-import { Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey } from "sequelize";
+import { Model, Sequelize, DataTypes, InferAttributes, InferCreationAttributes, NonAttribute, ForeignKey, Association } from "sequelize";
 import { User } from "./user";
 
 export enum Role {
@@ -37,6 +37,12 @@ export class Permission extends Model<InferAttributes<Permission>, InferCreation
     declare Role: Role;
     declare Table: Table;
     declare CRUD: CRUD
+
+    declare user: NonAttribute<User>;
+
+    declare static associations: {
+        user: Association<Permission, User>
+    }
 
     public static defindPermission(sequelize: Sequelize): NonAttribute<typeof Permission> {
         if (sequelize.models.Permission === Permission) return Permission;
