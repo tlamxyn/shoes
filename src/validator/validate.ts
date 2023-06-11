@@ -93,14 +93,14 @@ export class ValidateCollector {
         if (this.type === "DeleteProductTypeSchema") {
             this.schema = ProductTypeSchema.DeleteProductTypeSchema;
             this.data = {
-                ID: this.req.params.ID
+                ID: this.req.params.producttype_id
             } as ProductTypeSchema.DeleteProductTypeSchema;
             return;
         }
         if (this.type === "GetOneProductTypeSchema") {
             this.schema = ProductTypeSchema.GetOneProductTypeSchema;
             this.data = {
-                ID: this.req.params.ID
+                ID: this.req.params.producttype_id
             } as ProductTypeSchema.GetOneProductTypeSchema;
             return;
         }
