@@ -158,7 +158,7 @@ export class ValidateCollector {
         if (this.type === "CreateVariationValueSchema") {
             this.schema = VariationValueSchema.CreateVariationValueSchema;
             this.data = {
-                VariationID: this.req.params.variationvalue_id,
+                VariationID: this.req.params.variation_id,
                 Value: this.req.body.Value
             } as VariationValueSchema.CreateVariationValueSchema;
             return;

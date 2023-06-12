@@ -5,7 +5,7 @@ import { CRUD, Role, Table } from "../../models/permission";
 import VariationValueController from "../../controllers/admin/variationvalue.controller";
 import { GeneralSchema, VariationValueSchema } from "../../validator/validate";
 
-const variationvalue_router = Router();
+const variationvalue_router = Router({ mergeParams: true });
 
 variationvalue_router.use(Authentication)
 

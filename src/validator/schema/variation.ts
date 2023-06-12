@@ -23,7 +23,7 @@ export type CreateVariationSchema = Static<typeof CreateVariationSchema>
  * Update Variation Schema and Type
  */
 export const UpdateVariationSchema = Type.Object({
-    ID: Type.String({format: "uuid"}),
+    ID: Type.String({ format: "uuid" }),
     Name: Type.String(),
     Type: Type.Enum(VariationType)
 })
@@ -34,7 +34,7 @@ export type UpdateVariationSchema = Static<typeof UpdateVariationSchema>
  * Get 1 Variation Schema and Type
  */
 export const GetOneVariationSchema = Type.Object({
-    ID: Type.String({format: "uuid"})
+    ID: Type.String({ format: "uuid" })
 })
 export type GetOneVariationSchema = Static<typeof GetOneVariationSchema>
 
@@ -43,6 +43,6 @@ export type GetOneVariationSchema = Static<typeof GetOneVariationSchema>
  * Delete a Variation Schema and Type
  */
 export const DeleteVariationSchema = Type.Object({
-    ID: Type.String({format: "uuid"})
+    ID: Type.String({ format: "uuid" })
 })
 export type DeleteVariationSchema = Static<typeof DeleteVariationSchema>
