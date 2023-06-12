@@ -28,7 +28,7 @@ producttype_router.post('/',
     ProductTypeController.CreateProductType
 )
 
-producttype_router.put('/',
+producttype_router.put('/:producttype_id',
     Authorization(Role.Customer, [{ Table: Table.producttype, CRUD: CRUD.OnlyUpdate }]),
     Validate("UpdateProductTypeSchema"),
     ProductTypeController.UpdateProductType

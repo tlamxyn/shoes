@@ -8,7 +8,7 @@ export default class ProductTypeController {
         try {
             const pagination: GeneralSchema.PaginationSchema = res.locals.PaginationSchema;
             const producttypes = await ProductType.findAll({
-                limit: pagination.limit, 
+                limit: pagination.limit,
                 offset: pagination.limit * (pagination.page - 1)
             });
             return OK(res, { data: producttypes });
@@ -62,9 +62,19 @@ export default class ProductTypeController {
         const { ID, Name }: MainSchema.UpdateProductTypeSchema = res.locals.UpdateProductTypeSchema;
         const transaction = await MySQL.sequelize!.transaction();
         try {
+            const producttype = await ProductType.findOne({ where: { ID: ID } });
+            if (!producttype) {
+                await transaction.rollback();
+                return NotFound(res, {});
+            }
+            const result = await producttype!.update({ Name: Name }, { transaction: transaction })
+            if (!result) {
+                await transaction.rollback();
+                return InternalServerError(res, {});
+            }
 
             await transaction.commit();
-            return OK(res, { data: null });
+            return OK(res);
         } catch (error) {
             await transaction.rollback();
             console.log(error)
@@ -72,7 +82,7 @@ export default class ProductTypeController {
         }
     }
     public static async DeleteProductType(req: Request, res: Response): Promise<Response> {
-        const ID = req.params.producttype_id ?? null;
+        const { ID }: MainSchema.DeleteProductTypeSchema = res.locals.DeleteProductTypeSchema;
         const transaction = await MySQL.sequelize!.transaction();
         try {
             const producttype = await ProductType.findOne({ where: { ID: ID } });
@@ -82,11 +92,7 @@ export default class ProductTypeController {
                 return NotFound(res, {});
             }
             await producttype.destroy({ transaction: transaction });
-            let check = await ProductType.findOne({ where: { ID: ID } });
-            if (check) {
-                await transaction.rollback();
-                return InternalServerError(res, {});
-            }
+
             await transaction.commit();
             return OK(res, { message: "Deleted" });
         } catch (error) {

@@ -6,7 +6,7 @@ export function setCookie(
     value: string,
     option: CookieOptions | null = null
 ): void {
-    res.cookie(name, value, option || { httpOnly: true, maxAge: 2400000 })
+    res.cookie(name, value, option ?? { httpOnly: true, maxAge: 2592000000 })
 }
 
 export function setCookies(
@@ -15,6 +15,6 @@ export function setCookies(
     option: CookieOptions | null = null
 ): void {
     Object.entries(data).forEach(value => {
-        res.cookie(value[0], value[1], option || { httpOnly: true, maxAge: 2400000 })
+        res.cookie(value[0], value[1], option ?? { httpOnly: true, maxAge: 2592000000 })
     })
 }

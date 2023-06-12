@@ -85,7 +85,7 @@ export class ValidateCollector {
         if (this.type === "UpdateProductTypeSchema") {
             this.schema = ProductTypeSchema.UpdateProductTypeSchema;
             this.data = {
-                ID: this.req.body.ID,
+                ID: this.req.params.producttype_id,
                 Name: this.req.body.Name
             } as ProductTypeSchema.UpdateProductTypeSchema;
             return;
