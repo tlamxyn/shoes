@@ -3,7 +3,6 @@ import { GeneralSchema, VariationSchema as MainSchema } from "../../validator/va
 import { MySQL } from "../../database/database";
 import { BadRequest, InternalServerError, NotFound, OK } from "../../services/response_content/response_content";
 import { Variation } from "../../models/variation";
-import { Op } from "sequelize";
 
 export default class VariationController {
     public static async GetVariations(req: Request, res: Response) {
