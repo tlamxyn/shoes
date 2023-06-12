@@ -1,11 +1,13 @@
 import Ajv from "ajv";
 import * as ProductTypeSchema from "./schema/producttype";
+import * as VariationSchema from "./schema/variation";
 import * as GeneralSchema from "./schema/general";
 import { Request } from "express";
 
 export {
     GeneralSchema,
     ProductTypeSchema,
+    VariationSchema
 }
 
 /**
@@ -31,6 +33,10 @@ export class ValidateWorker {
         this.ajv.addSchema(ProductTypeSchema.UpdateProductTypeSchema, "UpdateProductTypeSchema")
         this.ajv.addSchema(ProductTypeSchema.DeleteProductTypeSchema, "DeleteProductTypeSchema")
 
+        this.ajv.addSchema(VariationSchema.CreateVariationSchema, "CreateVariationSchema")
+        this.ajv.addSchema(VariationSchema.GetOneVariationSchema, "GetOneVariationSchema")
+        this.ajv.addSchema(VariationSchema.UpdateVariationSchema, "UpdateVariationSchema")
+        this.ajv.addSchema(VariationSchema.DeleteVariationSchema, "DeleteVariationSchema")
 
         Object.entries(this.ajv.schemas).forEach(name => {
             this.ajv.getSchema(name[0])
@@ -67,6 +73,8 @@ export class ValidateCollector {
     }
 
     public collectData() {
+
+        // ProductType
         if (this.type === "PaginationSchema") {
             this.schema = GeneralSchema.PaginationSchema;
             this.data = {
@@ -102,6 +110,39 @@ export class ValidateCollector {
             this.data = {
                 ID: this.req.params.producttype_id
             } as ProductTypeSchema.GetOneProductTypeSchema;
+            return;
+        }
+
+        // Variation
+        if (this.type === "CreateVariationSchema") {
+            this.schema = VariationSchema.CreateVariationSchema;
+            this.data = {
+                Type: this.req.body.Type,
+                Name: this.req.body.Name
+            } as VariationSchema.CreateVariationSchema;
+            return;
+        }
+        if (this.type === "GetOneVariationSchema") {
+            this.schema = VariationSchema.GetOneVariationSchema;
+            this.data = {
+                ID: this.req.params.variation_id
+            } as VariationSchema.GetOneVariationSchema;
+            return;
+        }
+        if (this.type === "UpdateVariationSchema") {
+            this.schema = VariationSchema.UpdateVariationSchema;
+            this.data = {
+                ID: this.req.params.variation_id,
+                Type: this.req.body.Type,
+                Name: this.req.body.Name
+            } as VariationSchema.UpdateVariationSchema;
+            return;
+        }
+        if (this.type === "DeleteVariationSchema") {
+            this.schema = VariationSchema.DeleteVariationSchema;
+            this.data = {
+                ID: this.req.params.variation_id
+            } as VariationSchema.DeleteVariationSchema;
             return;
         }
     }

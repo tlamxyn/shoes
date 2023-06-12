@@ -1,5 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 
+export enum Name {
+    PaginationSchema
+}
+
 /**
  * @description
  * Create New ProductType Schema and Type
