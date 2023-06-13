@@ -11,31 +11,31 @@ producttype_router.use(Authentication)
 
 producttype_router.get('/',
     Authorization(Role.Administrator, [{ Table: Table.producttype, CRUD: CRUD.OnlyRead }]),
-    Validate(GeneralSchema.Name[GeneralSchema.Name.PaginationSchema]),
+    Validate(GeneralSchema.Name.PaginationSchema),
     ProductTypeController.GetProductTypes
 )
 
 producttype_router.get('/:producttype_id',
     Authorization(Role.Administrator, [{ Table: Table.producttype, CRUD: CRUD.OnlyRead }]),
-    Validate(ProductTypeSchema.Name[ProductTypeSchema.Name.GetOneProductTypeSchema]),
+    Validate(ProductTypeSchema.Name.GetOneProductTypeSchema),
     ProductTypeController.GetProductType
 )
 
 producttype_router.post('/',
     Authorization(Role.Administrator, [{ Table: Table.producttype, CRUD: CRUD.OnlyCreate }]),
-    Validate(ProductTypeSchema.Name[ProductTypeSchema.Name.CreateProductTypeSchema]),
+    Validate(ProductTypeSchema.Name.CreateProductTypeSchema),
     ProductTypeController.CreateProductType
 )
 
 producttype_router.put('/:producttype_id',
     Authorization(Role.Administrator, [{ Table: Table.producttype, CRUD: CRUD.OnlyUpdate }]),
-    Validate(ProductTypeSchema.Name[ProductTypeSchema.Name.UpdateProductTypeSchema]),
+    Validate(ProductTypeSchema.Name.UpdateProductTypeSchema),
     ProductTypeController.UpdateProductType
 )
 
 producttype_router.delete('/:producttype_id',
     Authorization(Role.Administrator, [{ Table: Table.producttype, CRUD: CRUD.OnlyDelete }]),
-    Validate(ProductTypeSchema.Name[ProductTypeSchema.Name.DeleteProductTypeSchema]),
+    Validate(ProductTypeSchema.Name.DeleteProductTypeSchema),
     ProductTypeController.DeleteProductType
 )
 export default producttype_router;

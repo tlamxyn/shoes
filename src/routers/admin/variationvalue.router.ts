@@ -11,32 +11,32 @@ variationvalue_router.use(Authentication)
 
 variationvalue_router.get('/',
     Authorization(Role.Administrator, [{ Table: Table.variationvalue, CRUD: CRUD.OnlyRead }]),
-    Validate(GeneralSchema.Name[GeneralSchema.Name.PaginationSchema]),
-    Validate(VariationValueSchema.Name[VariationValueSchema.Name.GetListVariationValueSchema]),
+    Validate(GeneralSchema.Name.PaginationSchema),
+    Validate(VariationValueSchema.Name.GetListVariationValueSchema),
     VariationValueController.GetVariationValues
 )
 
 variationvalue_router.get('/:variationvalue_id',
     Authorization(Role.Administrator, [{ Table: Table.variationvalue, CRUD: CRUD.OnlyRead }]),
-    Validate(VariationValueSchema.Name[VariationValueSchema.Name.GetOneVariationValueSchema]),
+    Validate(VariationValueSchema.Name.GetOneVariationValueSchema),
     VariationValueController.GetVariationValue
 )
 
 variationvalue_router.post('/',
     Authorization(Role.Administrator, [{ Table: Table.variationvalue, CRUD: CRUD.OnlyCreate }]),
-    Validate(VariationValueSchema.Name[VariationValueSchema.Name.CreateVariationValueSchema]),
+    Validate(VariationValueSchema.Name.CreateVariationValueSchema),
     VariationValueController.CreateVariationValue
 )
 
 variationvalue_router.put('/:variationvalue_id',
     Authorization(Role.Administrator, [{ Table: Table.variationvalue, CRUD: CRUD.OnlyUpdate }]),
-    Validate(VariationValueSchema.Name[VariationValueSchema.Name.UpdateVariationValueSchema]),
+    Validate(VariationValueSchema.Name.UpdateVariationValueSchema),
     VariationValueController.UpdateVariationValue
 )
 
 variationvalue_router.delete('/:variationvalue_id',
     Authorization(Role.Administrator, [{ Table: Table.variationvalue, CRUD: CRUD.OnlyDelete }]),
-    Validate(VariationValueSchema.Name[VariationValueSchema.Name.DeleteVariationValueSchema]),
+    Validate(VariationValueSchema.Name.DeleteVariationValueSchema),
     VariationValueController.DeleteVariationValue
 )
 

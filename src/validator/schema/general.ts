@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 
 export enum Name {
-    PaginationSchema
+    PaginationSchema = "PaginationSchema"
 }
 
 /**

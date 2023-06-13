@@ -2,10 +2,10 @@ import { Static, Type } from "@sinclair/typebox";
 import { Type as VariationType } from "../../models/variation";
 
 export enum Name {
-    CreateVariationSchema,
-    UpdateVariationSchema,
-    GetOneVariationSchema,
-    DeleteVariationSchema
+    CreateVariationSchema = "CreateVariationSchema",
+    UpdateVariationSchema = "UpdateVariationSchema",
+    GetOneVariationSchema = "GetOneVariationSchema",
+    DeleteVariationSchema = "DeleteVariationSchema"
 }
 
 /**

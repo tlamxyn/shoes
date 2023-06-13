@@ -1,4 +1,5 @@
 import Ajv from "ajv";
+import * as ProductSchema from "./schema/product";
 import * as ProductTypeSchema from "./schema/producttype";
 import * as VariationSchema from "./schema/variation";
 import * as VariationValueSchema from "./schema/variationvalue";
@@ -7,9 +8,10 @@ import { Request } from "express";
 
 export {
     GeneralSchema,
+    ProductSchema,
     ProductTypeSchema,
     VariationSchema,
-    VariationValueSchema
+    VariationValueSchema,
 }
 
 /**
@@ -34,6 +36,11 @@ export class ValidateWorker {
         this.ajv.addSchema(ProductTypeSchema.GetOneProductTypeSchema, "GetOneProductTypeSchema")
         this.ajv.addSchema(ProductTypeSchema.UpdateProductTypeSchema, "UpdateProductTypeSchema")
         this.ajv.addSchema(ProductTypeSchema.DeleteProductTypeSchema, "DeleteProductTypeSchema")
+
+        this.ajv.addSchema(ProductSchema.CreateProductSchema, "CreateProductSchema")
+        this.ajv.addSchema(ProductSchema.GetOneProductSchema, "GetOneProductSchema")
+        this.ajv.addSchema(ProductSchema.UpdateProductSchema, "UpdateProductSchema")
+        this.ajv.addSchema(ProductSchema.DeleteProductSchema, "DeleteProductSchema")
 
         this.ajv.addSchema(VariationSchema.CreateVariationSchema, "CreateVariationSchema")
         this.ajv.addSchema(VariationSchema.GetOneVariationSchema, "GetOneVariationSchema")
@@ -82,7 +89,7 @@ export class ValidateCollector {
 
     public collectData() {
 
-        // ProductType
+        // Pagination
         if (this.type === "PaginationSchema") {
             this.schema = GeneralSchema.PaginationSchema;
             this.data = {
@@ -91,6 +98,8 @@ export class ValidateCollector {
             } as GeneralSchema.PaginationSchema
             return;
         }
+
+        // ProductType
         if (this.type === "CreateProductTypeSchema") {
             this.schema = ProductTypeSchema.CreateProductTypeSchema;
             this.data = {
@@ -118,6 +127,41 @@ export class ValidateCollector {
             this.data = {
                 ID: this.req.params.producttype_id
             } as ProductTypeSchema.GetOneProductTypeSchema;
+            return;
+        }
+
+        // Product
+        if (this.type === "CreateProductSchema") {
+            this.schema = ProductSchema.CreateProductSchema;
+            this.data = {
+                Name: this.req.body.Name,
+                ProductTypeID: this.req.body.ProductTypeID,
+                Description: this.req.body.Description
+            } as ProductSchema.CreateProductSchema;
+            return;
+        }
+        if (this.type === "UpdateProductSchema") {
+            this.schema = ProductSchema.UpdateProductSchema;
+            this.data = {
+                ID: this.req.params.product_id,
+                ProductTypeID: this.req.body.ProductTypeID,
+                Name: this.req.body.Name,
+                Description: this.req.body.Description
+            } as ProductSchema.UpdateProductSchema;
+            return;
+        }
+        if (this.type === "DeleteProductSchema") {
+            this.schema = ProductSchema.DeleteProductSchema;
+            this.data = {
+                ID: this.req.params.product_id
+            } as ProductSchema.DeleteProductSchema;
+            return;
+        }
+        if (this.type === "GetOneProductSchema") {
+            this.schema = ProductSchema.GetOneProductSchema;
+            this.data = {
+                ID: this.req.params.product_id
+            } as ProductSchema.GetOneProductSchema;
             return;
         }
 

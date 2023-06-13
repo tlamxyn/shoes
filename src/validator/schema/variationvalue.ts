@@ -1,11 +1,11 @@
 import { Static, Type } from "@sinclair/typebox";
 
 export enum Name {
-    CreateVariationValueSchema,
-    UpdateVariationValueSchema,
-    GetOneVariationValueSchema,
-    GetListVariationValueSchema,
-    DeleteVariationValueSchema,
+    CreateVariationValueSchema = "CreateVariationValueSchema",
+    UpdateVariationValueSchema = "UpdateVariationValueSchema",
+    GetOneVariationValueSchema = "GetOneVariationValueSchema",
+    GetListVariationValueSchema = "GetListVariationValueSchema",
+    DeleteVariationValueSchema = "DeleteVariationValueSchema",
 }
 
 /**
