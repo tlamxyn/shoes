@@ -55,6 +55,7 @@ export class Item extends Model<InferAttributes<Item>, InferCreationAttributes<I
             },
             SKU: {
                 type: DataTypes.STRING,
+                unique: true,
                 allowNull: false
             },
             CreatedAt: DataTypes.DATE,
