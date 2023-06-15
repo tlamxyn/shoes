@@ -18,6 +18,9 @@ export default class VariationValueController {
             }
 
             const variationvalues = await VariationValue.findAll({
+                where: {
+                    VariationID: VariationID
+                },
                 limit: pagination.limit,
                 offset: pagination.limit * (pagination.page - 1)
             })

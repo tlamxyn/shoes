@@ -6,10 +6,10 @@ import { Favorite } from "./favorite";
 import { Item } from "./item";
 
 export class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Product>> {
-    declare ID: CreationOptional<String>;
-    declare Name: String;
-    declare Description: String;
-    declare ProductTypeID: ForeignKey<String>;
+    declare ID: CreationOptional<string>;
+    declare Name: string;
+    declare Description: string;
+    declare ProductTypeID: ForeignKey<string>;
     declare CreatedAt: CreationOptional<Date>;
     declare UpdatedAt: CreationOptional<Date>;
     declare DeletedAt: CreationOptional<Date | null>;

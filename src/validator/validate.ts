@@ -1,5 +1,6 @@
 import Ajv from "ajv";
 import * as ProductSchema from "./schema/product";
+import * as ItemSchema from "./schema/item";
 import * as ProductTypeSchema from "./schema/producttype";
 import * as VariationSchema from "./schema/variation";
 import * as VariationValueSchema from "./schema/variationvalue";
@@ -9,6 +10,7 @@ import { Request } from "express";
 export {
     GeneralSchema,
     ProductSchema,
+    ItemSchema,
     ProductTypeSchema,
     VariationSchema,
     VariationValueSchema,
@@ -41,6 +43,12 @@ export class ValidateWorker {
         this.ajv.addSchema(ProductSchema.GetOneProductSchema, "GetOneProductSchema")
         this.ajv.addSchema(ProductSchema.UpdateProductSchema, "UpdateProductSchema")
         this.ajv.addSchema(ProductSchema.DeleteProductSchema, "DeleteProductSchema")
+
+        this.ajv.addSchema(ItemSchema.CreateItemSchema, "CreateItemSchema")
+        this.ajv.addSchema(ItemSchema.GetOneItemSchema, "GetOneItemSchema")
+        this.ajv.addSchema(ItemSchema.GetListItemSchema, "GetListItemSchema")
+        this.ajv.addSchema(ItemSchema.UpdateItemSchema, "UpdateItemSchema")
+        this.ajv.addSchema(ItemSchema.DeleteItemSchema, "DeleteItemSchema")
 
         this.ajv.addSchema(VariationSchema.CreateVariationSchema, "CreateVariationSchema")
         this.ajv.addSchema(VariationSchema.GetOneVariationSchema, "GetOneVariationSchema")
@@ -237,6 +245,50 @@ export class ValidateCollector {
                 VariationID: this.req.params.variation_id,
                 ID: this.req.params.variationvalue_id
             } as VariationValueSchema.DeleteVariationValueSchema;
+            return;
+        }
+
+        // Item
+        if (this.type === "CreateItemSchema") {
+            this.schema = ItemSchema.CreateItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                Stock: this.req.body.Stock,
+                Price: this.req.body.Price
+            } as ItemSchema.CreateItemSchema;
+            return;
+        }
+        if (this.type === "GetOneItemSchema") {
+            this.schema = ItemSchema.GetOneItemSchema;
+            this.data = {
+                ID: this.req.params.item_id,
+                ProductID: this.req.params.product_id,
+            } as ItemSchema.GetOneItemSchema;
+            return;
+        }
+        if (this.type === "GetListItemSchema") {
+            this.schema = ItemSchema.GetListItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+            } as ItemSchema.GetListItemSchema;
+            return;
+        }
+        if (this.type === "UpdateItemSchema") {
+            this.schema = ItemSchema.UpdateItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ID: this.req.params.item_id,
+                Stock: this.req.body.Value,
+                Price: this.req.body.Price
+            } as ItemSchema.UpdateItemSchema;
+            return;
+        }
+        if (this.type === "DeleteItemSchema") {
+            this.schema = ItemSchema.DeleteItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ID: this.req.params.item_id
+            } as ItemSchema.DeleteItemSchema;
             return;
         }
     }

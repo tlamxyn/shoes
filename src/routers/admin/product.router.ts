@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { Authentication, Authorization } from "../../middlewares/auth.middleware";
-import ProductController from "../../controllers/admin/product.controller";
+import { ProductController } from "../../controllers/admin/controller";
 import { Validate } from "../../middlewares/validate.middleware";
 import { GeneralSchema, ProductSchema } from "../../validator/validate";
 import { CRUD, Role, Table } from "../../models/permission";

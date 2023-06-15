@@ -26,7 +26,8 @@ export type CreateItemSchema = Static<typeof CreateItemSchema>
 export const UpdateItemSchema = Type.Object({
     ID: Type.String({ format: "uuid" }),
     ProductID: Type.String({ format: "uuid" }),
-    Value: Type.String()
+    Stock: Type.Number({ minimum: 0}),
+    Price: Type.Number({ minimum: 0})
 })
 export type UpdateItemSchema = Static<typeof UpdateItemSchema>
 

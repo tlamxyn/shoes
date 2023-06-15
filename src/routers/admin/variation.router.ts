@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Authentication, Authorization } from "../../middlewares/auth.middleware";
 import { Validate } from "../../middlewares/validate.middleware";
 import { CRUD, Role, Table } from "../../models/permission";
-import VariationController from "../../controllers/admin/variation.controller";
+import { VariationController } from "../../controllers/admin/controller";
 import { GeneralSchema, VariationSchema } from "../../validator/validate";
 
 const variation_router = Router();

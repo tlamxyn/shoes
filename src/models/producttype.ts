@@ -2,8 +2,8 @@ import { Association, CreationOptional, DataTypes, InferAttributes, InferCreatio
 import { Product } from "./product";
 
 export class ProductType extends Model<InferAttributes<ProductType>, InferCreationAttributes<ProductType>> {
-    declare ID: CreationOptional<String>
-    declare Name: String;
+    declare ID: CreationOptional<string>
+    declare Name: string;
 
     declare products: NonAttribute<Product[]>;
 
