@@ -4,6 +4,7 @@ import ProductTypeController from "./producttype.controller";
 import ItemController from "./item.controller";
 import VariationController from "./variation.controller";
 import VariationValueController from "./variationvalue.controller";
+import VariationValueGroupController from "./variationvaluegroup.controller";
 
 export {
     ImageController,
@@ -11,5 +12,6 @@ export {
     ItemController,
     ProductTypeController,
     VariationController,
-    VariationValueController
+    VariationValueController,
+    VariationValueGroupController
 }

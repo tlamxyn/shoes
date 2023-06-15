@@ -4,6 +4,7 @@ import * as ItemSchema from "./schema/item";
 import * as ProductTypeSchema from "./schema/producttype";
 import * as VariationSchema from "./schema/variation";
 import * as VariationValueSchema from "./schema/variationvalue";
+import * as VariationValueGroupSchema from "./schema/variationvaluegroup";
 import * as GeneralSchema from "./schema/general";
 import { Request } from "express";
 
@@ -14,6 +15,7 @@ export {
     ProductTypeSchema,
     VariationSchema,
     VariationValueSchema,
+    VariationValueGroupSchema
 }
 
 /**
@@ -60,6 +62,10 @@ export class ValidateWorker {
         this.ajv.addSchema(VariationValueSchema.GetListVariationValueSchema, "GetListVariationValueSchema")
         this.ajv.addSchema(VariationValueSchema.UpdateVariationValueSchema, "UpdateVariationValueSchema")
         this.ajv.addSchema(VariationValueSchema.DeleteVariationValueSchema, "DeleteVariationValueSchema")
+
+        this.ajv.addSchema(VariationValueGroupSchema.CreateVariationValueGroupSchema, "CreateVariationValueGroupSchema")
+        this.ajv.addSchema(VariationValueGroupSchema.GetListVariationValueGroupSchema, "GetListVariationValueGroupSchema")
+        this.ajv.addSchema(VariationValueGroupSchema.DeleteVariationValueGroupSchema, "DeleteVariationValueGroupSchema")
 
         Object.entries(this.ajv.schemas).forEach(name => {
             this.ajv.getSchema(name[0])
@@ -245,6 +251,34 @@ export class ValidateCollector {
                 VariationID: this.req.params.variation_id,
                 ID: this.req.params.variationvalue_id
             } as VariationValueSchema.DeleteVariationValueSchema;
+            return;
+        }
+
+        // VariationValueGroup
+        if (this.type === "CreateVariationValueGroupSchema") {
+            this.schema = VariationValueGroupSchema.CreateVariationValueGroupSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ItemID: this.req.params.item_id,
+                VariationValueID: this.req.body.variationvalue_id
+            } as VariationValueGroupSchema.CreateVariationValueGroupSchema;
+            return;
+        }
+        if (this.type === "GetListVariationValueGroupSchema") {
+            this.schema = VariationValueGroupSchema.GetListVariationValueGroupSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ItemID: this.req.params.item_id
+            } as VariationValueGroupSchema.GetListVariationValueGroupSchema;
+            return;
+        }
+        if (this.type === "DeleteVariationValueGroupSchema") {
+            this.schema = VariationValueGroupSchema.DeleteVariationValueGroupSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ItemID: this.req.params.item_id,
+                VariationValueID: this.req.params.variation_id
+            } as VariationValueGroupSchema.DeleteVariationValueGroupSchema;
             return;
         }
 
