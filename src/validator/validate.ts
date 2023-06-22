@@ -1,6 +1,7 @@
 import Ajv from "ajv";
 import * as ProductSchema from "./schema/product";
 import * as ItemSchema from "./schema/item";
+import * as ImageSchema from "./schema/image";
 import * as ProductTypeSchema from "./schema/producttype";
 import * as VariationSchema from "./schema/variation";
 import * as VariationValueSchema from "./schema/variationvalue";
@@ -12,6 +13,7 @@ export {
     GeneralSchema,
     ProductSchema,
     ItemSchema,
+    ImageSchema,
     ProductTypeSchema,
     VariationSchema,
     VariationValueSchema,
@@ -290,6 +292,59 @@ export class ValidateCollector {
                 Stock: this.req.body.Stock,
                 Price: this.req.body.Price
             } as ItemSchema.CreateItemSchema;
+            return;
+        }
+        if (this.type === "GetOneItemSchema") {
+            this.schema = ItemSchema.GetOneItemSchema;
+            this.data = {
+                ID: this.req.params.item_id,
+                ProductID: this.req.params.product_id,
+            } as ItemSchema.GetOneItemSchema;
+            return;
+        }
+        if (this.type === "GetListItemSchema") {
+            this.schema = ItemSchema.GetListItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+            } as ItemSchema.GetListItemSchema;
+            return;
+        }
+        if (this.type === "UpdateItemSchema") {
+            this.schema = ItemSchema.UpdateItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ID: this.req.params.item_id,
+                Stock: this.req.body.Value,
+                Price: this.req.body.Price
+            } as ItemSchema.UpdateItemSchema;
+            return;
+        }
+        if (this.type === "DeleteItemSchema") {
+            this.schema = ItemSchema.DeleteItemSchema;
+            this.data = {
+                ProductID: this.req.params.product_id,
+                ID: this.req.params.item_id
+            } as ItemSchema.DeleteItemSchema;
+            return;
+        }
+
+        // Image
+        if (this.type === "CreateImageSchema") {
+            this.schema = ImageSchema.CreateImageSchema;
+            this.data = {
+                OwnerID: this.req.params.owner_id,
+                Table: this.req.body.Table,
+                image: this.req.file as Express.Multer.File ?? undefined
+            } as ImageSchema.CreateImageSchema;
+            return;
+        }
+        if (this.type === "CreateImagesSchema") {
+            this.schema = ImageSchema.CreateImagesSchema;
+            this.data = {
+                OwnerID: this.req.params.owner_id,
+                Table: this.req.body.Table,
+                images: this.req.files as Express.Multer.File[] ?? undefined
+            } as ImageSchema.CreateImagesSchema;
             return;
         }
         if (this.type === "GetOneItemSchema") {

@@ -23,3 +23,10 @@ export const SMTPTransportOptions = {
 } as SMTPTransport.Options;
 export const VERIFY_EMAIL_CODE_MAXAGE = ONE_MINUTE_IN_MILISECOND * 3;
 
+export const ImageExtension = [
+    "png",
+    "jpg",
+    "jpeg",
+    "webp"
+]
+export const ImageDestination = "./public/";

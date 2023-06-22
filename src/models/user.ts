@@ -14,6 +14,7 @@ import { Favorite } from "./favorite";
 import { Invoice } from "./invoice";
 import { ShipWork } from "./shipwork";
 import { Cart } from "./cart";
+import { Image } from "./image";
 
 export enum Gender {
     Other = "Other",
@@ -61,6 +62,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare invoices: NonAttribute<Invoice[]>;
     declare shipworks: NonAttribute<ShipWork[]>;
     declare carts: NonAttribute<Cart[]>;
+    declare image: NonAttribute<Image>;
 
     declare static associations: {
         permissions: Association<User, Permission>,
@@ -74,6 +76,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         invoices: Association<User, Invoice>,
         shipworks: Association<User, ShipWork>,
         carts: Association<User, Cart>
+        image: Association<User, Image>
     };
 
     public static defineUser(sequelize: Sequelize): NonAttribute<typeof User> {
@@ -238,6 +241,15 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         if (sequelize.models.Problem != Problem) return false;
 
         User.hasMany(Problem, { foreignKey: "UserID", sourceKey: "ID", as: "problems" });
+
+        return true;
+    }
+    public static associateImage(sequelize: Sequelize): NonAttribute<boolean> {
+        if (sequelize.models.User != User) return false;
+
+        if (sequelize.models.Image != Image) return false;
+
+        User.hasOne(Image, { foreignKey: "OwnerID", sourceKey: "ID", as: "image" });
 
         return true;
     }

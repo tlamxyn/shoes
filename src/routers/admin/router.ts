@@ -14,6 +14,6 @@ router.use('/producttype', producttype_router)
 router.use('/variation', variation_router)
 router.use('/variation/:variation_id/variationvalue', variationvalue_router)
 router.use('/user', user_router)
-router.use('/image', image_router)
+router.use('/owner/:owner_id/image', image_router)
 
 export default router;
