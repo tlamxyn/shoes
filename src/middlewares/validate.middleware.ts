@@ -8,11 +8,11 @@ export function Validate(type: string) {
         const collector = new Collector(req, type);
         const result = Worker.ajv.validate(collector.schema, collector.data);
 
-        if(result) {
+        if (result) {
             res.locals[type] = collector.data;
             return next();
         }
 
-        return BadRequest(res, {})
+        return BadRequest(res, { message: result })
     }
 }

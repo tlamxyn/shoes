@@ -4,7 +4,6 @@ import { Table } from "../../models/image";
 export enum Name {
     CreateImageSchema = "CreateImageSchema",
     CreateImagesSchema = "CreateImagesSchema",
-    GetOneImageSchema = "GetOneImageSchema",
     DeleteImageSchema = "DeleteImageSchema",
     DeleteOwnerImagesSchema = "DeleteOwnerImagesSchema",
 }
@@ -33,27 +32,11 @@ export type CreateImagesSchema = Static<typeof CreateImagesSchema>
 
 /**
  * @description
- * Get 1 Image Schema and Type
- */
-export const GetOneImageSchema = Type.Object({
-    ID: Type.String({ format: "uuid" })
-})
-export type GetOneImageSchema = Static<typeof GetOneImageSchema>
-
-// /**
-//  * @description
-//  * Get List of Image Schema and Type
-//  */
-// export const GetListImageSchema = Type.Object({
-//     ProductID: Type.String({ format: "uuid" })
-// })
-// export type GetListImageSchema = Static<typeof GetListImageSchema>
-
-/**
- * @description
  * Delete a Image Schema and Type
  */
 export const DeleteImageSchema = Type.Object({
+    OwnerID: Type.String({ format: "uuid" }),
+    Table: Type.Enum(Table),
     ID: Type.String({ format: "uuid" })
 })
 export type DeleteImageSchema = Static<typeof DeleteImageSchema>

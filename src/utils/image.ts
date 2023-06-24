@@ -9,6 +9,7 @@ import { User } from "../models/user";
 import { Notification } from "../models/notification";
 import { Event } from "../models/event";
 import { InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { RmOptions } from "fs";
 
 /**
  * 
@@ -55,12 +56,24 @@ export async function saveImage(imagename: string, buffer: Buffer): Promise<null
     }
 }
 
+export async function deleteImage(imagename: string): Promise<null> {
+    try {
+        if (!await isExist(imagename)) {
+            throw Error("Image not Existed");
+        }
+        await fs.rm(path.join(ImageDestination, imagename));
+        return null
+    } catch (error) {
+        throw error as Error;
+    }
+}
+
 export function getTable(table: string): Object | null {
-    if(table == Table.Event) return Event;
-    if(table == Table.Notification) return Notification;
-    if(table == Table.Problem) return Problem;
-    if(table == Table.Product) return Product;
-    if(table == Table.Review) return Review;
-    if(table == Table.User) return User;
+    if (table == Table.Event) return Event;
+    if (table == Table.Notification) return Notification;
+    if (table == Table.Problem) return Problem;
+    if (table == Table.Product) return Product;
+    if (table == Table.Review) return Review;
+    if (table == Table.User) return User;
     return null;
 }

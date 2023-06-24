@@ -54,6 +54,11 @@ export class ValidateWorker {
         this.ajv.addSchema(ItemSchema.UpdateItemSchema, "UpdateItemSchema")
         this.ajv.addSchema(ItemSchema.DeleteItemSchema, "DeleteItemSchema")
 
+        this.ajv.addSchema(ImageSchema.CreateImageSchema, "CreateImageSchema")
+        this.ajv.addSchema(ImageSchema.CreateImagesSchema, "CreateImagesSchema")
+        this.ajv.addSchema(ImageSchema.DeleteImageSchema, "DeleteImageSchema")
+        this.ajv.addSchema(ImageSchema.DeleteOwnerImagesSchema, "DeleteOwnerImagesSchema")
+
         this.ajv.addSchema(VariationSchema.CreateVariationSchema, "CreateVariationSchema")
         this.ajv.addSchema(VariationSchema.GetOneVariationSchema, "GetOneVariationSchema")
         this.ajv.addSchema(VariationSchema.UpdateVariationSchema, "UpdateVariationSchema")
@@ -347,37 +352,21 @@ export class ValidateCollector {
             } as ImageSchema.CreateImagesSchema;
             return;
         }
-        if (this.type === "GetOneItemSchema") {
-            this.schema = ItemSchema.GetOneItemSchema;
+        if (this.type === "DeleteImageSchema") {
+            this.schema = ImageSchema.DeleteImageSchema;
             this.data = {
-                ID: this.req.params.item_id,
-                ProductID: this.req.params.product_id,
-            } as ItemSchema.GetOneItemSchema;
+                OwnerID: this.req.params.owner_id,
+                Table: this.req.body.Table,
+                ID: this.req.params.image_id
+            } as ImageSchema.DeleteImageSchema;
             return;
         }
-        if (this.type === "GetListItemSchema") {
-            this.schema = ItemSchema.GetListItemSchema;
+        if (this.type === "DeleteOwnerImagesSchema") {
+            this.schema = ImageSchema.DeleteOwnerImagesSchema;
             this.data = {
-                ProductID: this.req.params.product_id,
-            } as ItemSchema.GetListItemSchema;
-            return;
-        }
-        if (this.type === "UpdateItemSchema") {
-            this.schema = ItemSchema.UpdateItemSchema;
-            this.data = {
-                ProductID: this.req.params.product_id,
-                ID: this.req.params.item_id,
-                Stock: this.req.body.Value,
-                Price: this.req.body.Price
-            } as ItemSchema.UpdateItemSchema;
-            return;
-        }
-        if (this.type === "DeleteItemSchema") {
-            this.schema = ItemSchema.DeleteItemSchema;
-            this.data = {
-                ProductID: this.req.params.product_id,
-                ID: this.req.params.item_id
-            } as ItemSchema.DeleteItemSchema;
+                OwnerID: this.req.params.owner_id,
+                Table: this.req.body.Table
+            } as ImageSchema.DeleteOwnerImagesSchema;
             return;
         }
     }

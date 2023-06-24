@@ -42,5 +42,10 @@ export const images: InferCreationAttributes<Image>[] = [
         OwnerID: "eb831c53-cee2-4aac-886d-1ddc84113ed0",
         Table: Table.Product,
         Name: "bd46f3b0-6cd9-465b-b862-201e942de42b.jpg"
+    }, {
+        ID: "78707eb7-5e05-434d-ac89-e45a1fc01746",
+        OwnerID: "eb831c53-cee2-4aac-886d-1ddc84113ed0",
+        Table: Table.Product,
+        Name: "78707eb7-5e05-434d-ac89-e45a1fc01746.jpg"
     }
 ]
