@@ -1,6 +1,5 @@
 import { Router } from "express";
 
-import AuthController from "../../controllers/auth.controller";
 import { Authentication, Authorization } from "../../middlewares/auth.middleware";
 import ImageController from "../../controllers/admin/image.controller";
 import { UploadImages, UploadImage } from "../../middlewares/file.middleware";

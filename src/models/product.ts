@@ -24,7 +24,7 @@ export class Product extends Model<InferAttributes<Product>, InferCreationAttrib
         producttype: Association<Product, ProductType>,
         images: Association<Product, Image>,
         reviews: Association<Product, Review>,
-        favorite: Association<Product, Favorite>,
+        favorites: Association<Product, Favorite>,
         items: Association<Product, Item>
     }
 
