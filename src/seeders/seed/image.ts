@@ -1,5 +1,6 @@
 import { InferCreationAttributes } from "sequelize";
 import { Image, Table } from "../../models/image";
+import fs from 'fs/promises';
 
 export const images: InferCreationAttributes<Image>[] = [
     {
@@ -49,3 +50,14 @@ export const images: InferCreationAttributes<Image>[] = [
         Name: "78707eb7-5e05-434d-ac89-e45a1fc01746.jpg"
     }
 ]
+
+const quickCreateImage = async () => {
+    try {
+    const file = await fs.readFile('public/download.jpg');
+    images.forEach((image) => {
+        fs.writeFile('public/' + image.Name, file);
+    })
+    } catch(error) {
+        throw error;
+    }
+}
