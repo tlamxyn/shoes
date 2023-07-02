@@ -21,7 +21,30 @@ import { verifyPermissionRequirement } from "../utils/authorization";
  */
 export async function Authentication(req: Request, res: Response, next: NextFunction) {
     try {
-        const { RefreshToken = null, AccessToken = null, DeviceName = null } = req.cookies;
+        let isWeb = req.headers['cookie']?.includes('DeviceName=Web') ? true : false;
+        let mobileCookie;
+        if (!isWeb) {
+            let strArray = (req.headers['cookie']
+                ?.replace(',', ';')
+                ?.replace(' ', ';')
+                .split(';') ?? [])
+                .filter((str) =>
+                    str.includes('AccessToken') ||
+                    str.includes('RefreshToken') ||
+                    str.includes('DeviceName')
+                );
+            let r = strArray.filter((str) => str.includes('RefreshToken'))[0] ?? undefined;
+            let a = strArray.filter((str) => str.includes('AccessToken'))[0] ?? undefined;
+            let d = strArray.filter((str) => str.includes('DeviceName'))[0] ?? undefined;
+
+            mobileCookie = {
+                RefreshToken: r ? r.split('=')[1] : r,
+                AccessToken: a ? a.split('=')[1] : a,
+                DeviceName: d ? d.split('=')[1] : d,
+            }
+        }
+
+        const { RefreshToken = null, AccessToken = null, DeviceName = null } = isWeb ? req.cookies : mobileCookie;
         if (!AccessToken || !RefreshToken || !DeviceName) {
             return Unauthorized(res, { message: "Login Required" });
         }
@@ -126,11 +149,11 @@ export function Authorization(role: Role = Role.Customer, percheck: PerCheck[] =
                 let allTable = permissions.find(value => value.Table == Table.ALL);
                 // If `all` table is existed then check CRUD, if not then check normal table
                 if (allTable) {
-                    return verifyPermissionRequirement(per.CRUD ,allTable.CRUD)
+                    return verifyPermissionRequirement(per.CRUD, allTable.CRUD)
                 }
                 // Check if normal table is existed
-                let normalTable = permissions.find(value =>value.Table == per.Table)
-                if(normalTable) {
+                let normalTable = permissions.find(value => value.Table == per.Table)
+                if (normalTable) {
                     return verifyPermissionRequirement(per.CRUD, normalTable.CRUD)
                 }
                 return false
