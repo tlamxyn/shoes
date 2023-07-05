@@ -66,7 +66,7 @@ export default class AuthController {
             // Create verify code and send mail
             const emailCode = randomDigitByTime(6);
 
-            const isCreated = await Verification.create({
+            const isCreated = await Verification.upsert({
                 UserID: user.ID,
                 VType: VType.Email,
                 VName: user.Email,
@@ -364,6 +364,104 @@ export default class AuthController {
             await transaction.rollback();
             console.log(error)
             return InternalServerError(res, { message: error });
+        }
+    }
+    public static async ForgotPassword(req: Request, res: Response): Promise<Response> {
+        const {
+            Email = null, AlreadySendMail = false,
+            OldPassword = null, NewPassword = null
+        } = req.body;
+
+        const transaction = await MySQL.sequelize!.transaction();
+
+        if (!AlreadySendMail) {
+            //Send Email
+            try {
+                // Check User Existence
+                const user = await User.findOne({
+                    where: {
+                        Email: Email
+                    }
+                });
+                if (!user) {
+                    await transaction.rollback();
+                    return BadRequest(res, { message: "This Email Is Not Existed" });
+                }
+
+                if (user.Status === Status.Locked) {
+                    await transaction.rollback();
+                    return BadRequest(res, { message: "This Email is already Locked, contact to Admin for more infos" });
+                }
+
+                // Generate New Password
+                const newPassword = randomDigitByTime(8);
+                const { salt, hash } = PasswordGenerator.createPasswordHash(NewPassword);
+                const isUpdated = await user.update({
+                    Password: hash,
+                    Salt: salt,
+                }, { transaction: transaction });
+                if (!isUpdated) {
+                    await transaction.rollback();
+                    return InternalServerError(res, { message: "Generate Verify Code Fail" });
+                }
+
+                // Send Mail
+                const isSent = await EmailService.sendMail(
+                    Email,
+                    "SHOES - New Password",
+                    `Your New Password is ${newPassword}. Using this to create your own password`
+                );
+                if (!isSent) {
+                    await transaction.rollback();
+                    return InternalServerError(res, { message: "Send Verify Code Fail" });
+                }
+
+                await transaction.commit();
+
+                return OK(res, {
+                    message: "Create New Password Completed"
+                })
+            } catch (error) {
+                console.log(error)
+                await transaction.rollback();
+                return InternalServerError(res, { message: error });
+            }
+
+        } else {
+
+            // Change Password
+            try {
+                const user = await User.findOne({ where: { Email: Email } });
+
+                if (!user) {
+                    await transaction.rollback();
+                    return BadRequest(res, { message: "User Not Exist" });
+                }
+
+                // Check Old Password Correction
+                const isValidOldPassword = PasswordGenerator
+                    .isValidPassword(OldPassword, user!.Password ?? "", user!.Salt ?? "");
+                if (!isValidOldPassword) {
+                    await transaction.rollback();
+                    return Unauthorized(res, { message: "Password incorrect" });
+                }
+
+                // Update New Password
+                const { salt, hash } = PasswordGenerator.createPasswordHash(NewPassword);
+                const updatedUser = await user!.update({ Salt: salt, Password: hash }, { transaction: transaction });
+
+                if (!updatedUser) {
+                    await transaction.rollback();
+                    return InternalServerError(res, { message: "Reset Password Failed" })
+                }
+
+                await transaction.commit();
+                return OK(res);
+            } catch (error) {
+                await transaction.rollback();
+                console.log(error)
+                return InternalServerError(res, { message: error });
+            }
         }
     }
 }
